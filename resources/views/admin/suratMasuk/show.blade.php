@@ -8,6 +8,15 @@
           <h3 class="font-weight-bold">Detail Surat  {{$suratMasuk->nomor_surat}}</h3>
           <h6 class="font-weight-normal mb-0"><a href="{{route('dashboard')}}">Dashboard</a> / <a href="{{route('surat.masuk')}}">Surat Masuk</a> / <i class="ti-email"></i> {{$suratMasuk->nomor_surat}}</h6>
         </div>
+        <div class="col-12 col-xl-4">
+          <div class="justify-content-end d-flex">
+           <div class="dropdown flex-md-grow-1 flex-xl-grow-0">
+             <a class="btn btn-sm btn-primary" href="{{route('surat.masuk')}}">
+              <i class="ti-arrow-left"></i> Kembali
+             </a>
+           </div>
+          </div>
+         </div>
       </div>
     </div>
   </div>
@@ -80,19 +89,19 @@
             <div class="row">
               <div class="col-md-12 mb-3">
                 <label class="form-label">Nomor Surat</label>
-                <input type="text" id="nomor" class="form-control form-control-sm" placeholder="Masukkan Nomor Surat" value="{{$suratMasuk->nomor_surat}}"/>
+                <input required type="text" id="nomor" class="form-control form-control-sm" placeholder="Masukkan Nomor Surat" value="{{$suratMasuk->nomor_surat}}"/>
               </div>
               <div class="col-md-12 mb-3">
                 <label class="form-label">Asal Surat</label>
-                <input type="text" id="asal" class="form-control form-control-sm" placeholder="Masukkan Asal Surat" value="{{$suratMasuk->asal_surat}}"/>
+                <input required type="text" id="asal" class="form-control form-control-sm" placeholder="Masukkan Asal Surat" value="{{$suratMasuk->asal_surat}}"/>
               </div>
               <div class="col-md-12 mb-3">
                   <label>Tanggal Surat</label>
-                  <input type="date" id="tanggal_surat" class="form-control form-control-sm" placeholder="Masukkan Tanggal Surat" value="{{$suratMasuk->tanggal_surat}}">
+                  <input required type="date" id="tanggal_surat" class="form-control form-control-sm" placeholder="Masukkan Tanggal Surat" value="{{$suratMasuk->tanggal_surat}}">
               </div>
               <div class="col-md-12 mb-3">
                   <label>Tanggal Terima</label>
-                  <input type="date" id="tanggal_terima" class="form-control form-control-sm" placeholder="Masukkan Tanggal Terima" value="{{$suratMasuk->tanggal_terima}}">
+                  <input required type="date" id="tanggal_terima" class="form-control form-control-sm" placeholder="Masukkan Tanggal Terima" value="{{$suratMasuk->tanggal_terima}}">
               </div>
               <div class="col-md-12 mb-3">
                 <label>Divisi</label>
@@ -100,11 +109,11 @@
               </div>
               <div class="col-md-12 mb-3">
                 <label class="form-label">Perihal</label>
-                <textarea class="form-control form-control-sm" id="perihal" placeholder="Masukkan Perihal Surat Masuk" rows="4">{{$suratMasuk->perihal}}</textarea>
+                <textarea required class="form-control form-control-sm" id="perihal" placeholder="Masukkan Perihal Surat Masuk" rows="4">{{$suratMasuk->perihal}}</textarea>
               </div>
               <div class="col-md-12 mb-3">
                 <div class="form-group">
-                  <label>File Surat</label>
+                  <label>File Surat*</label>
                   <input type="file" id="file_surat" class="file-upload-default">
                   <div class="input-group col-xs-12">
                     <input id="uploadFile" type="text" class="form-control form-control-sm file-upload-info" disabled placeholder="Upload File Surat Masuk">
@@ -112,11 +121,18 @@
                       <button class="file-upload-browse btn btn-primary" type="button">Unggah</button>
                     </span>
                   </div>
+                  <span for="">*File Harus Memiliki Format .pdf</span> <br>
+                  <span for="">*Ukuran file maksimal 2048Kb / 2Mb</span>
                 </div>
               </div>
             </div>
             <div class="d-flex justify-content-end">
-              <button type="submit" class="btn btn-primary"><i class="ti-save"></i> Perbarui</button>
+              <button disabled id="loader" class="btn btn-primary mr-2">
+                <div class="spinner-border" role="status">
+                  <span class="sr-only">Loading...</span>
+                </div>
+              </button>
+              <button type="submit" class="btn btn-primary perbarui"><i class="ti-save"></i> Perbarui</button>
             </div>
           </form>
         </div>
@@ -128,6 +144,7 @@
 @push('js')
   <script>
     $(document).ready(function() {
+      $('#loader').hide();
       let id = '{{$suratMasuk->id}}';  
       $('#ajaxSubmit').on('submit', function(e){
       e.preventDefault();
@@ -147,13 +164,20 @@
             data: data,
             processData: false,
             contentType: false,
+            beforeSend: function () {
+              $('#loader').show();
+              $('.perbarui').prop('disabled', true);
+            },
+            complete: function() {
+              $('#loader').hide();
+              $('.perbarui').prop('disabled', false);
+            },
             success: function(result){
               $("#surat").DataTable().ajax.reload();
               Toast.fire({
                 title: result.status,
                 icon: 'success',
               })
-              console.log(result);
               $('#closeModal').trigger('click');  
               $('#nomor').val(result.data.nomor_surat);
               $('#asal').val(result.data.asal_surat);
@@ -176,7 +200,6 @@
                 text: `${errors.message}`,
                 icon: 'error',
               })
-              console.log(result);
             },
           });
         } else {

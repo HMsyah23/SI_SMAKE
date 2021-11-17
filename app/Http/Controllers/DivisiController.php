@@ -15,7 +15,7 @@ class DivisiController extends Controller
 
     public function index()
     {
-        $data = Divisi::all();
+        $data = Divisi::with('suratMasuks')->get();
         return response()->json(['data' => $data] ,200);
     }
 
@@ -54,6 +54,9 @@ class DivisiController extends Controller
 
     public function destroy(Divisi $divisi)
     {
+        if($divisi->suratMasuks()->exists()){
+            return response()->json(['data' => ['status' => 'Divisi Gagal Dihapus, Terdapat File Surat Terkait Pada Divisi Ini'], 200]);
+        }
         $divisi->delete();
         return response()->json(['data' => ['status' => 'Divisi Berhasil Dihapus'], 200]);
     }

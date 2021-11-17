@@ -35,26 +35,23 @@
                 @csrf
                 <div class="form-group">
                   <input type="text" placeholder="Email" id="email" class="form-control form-control-lg" name="email" required autofocus>
-                  @if ($errors->has('email'))
-                    <span class="text-danger">{{ $errors->first('email') }}</span>
-                  @endif
                 </div>
                 <div class="form-group">
                   <input type="password" placeholder="Password" id="password" class="form-control form-control-lg" name="password" required>
-                  @if ($errors->has('password'))
-                    <span class="text-danger">{{ $errors->first('password') }}</span>
+                  @if (Session::has('error'))
+                    <span class="text-danger">{{ Session::get('error') }}</span>
                   @endif
                 </div>
                 <div class="mt-3">
                   <button class="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn" type="submit">SIGN IN</button>
                 </div>
                 <div class="my-2 d-flex justify-content-between align-items-center">
-                  <div class="form-check">
+                  {{-- <div class="form-check">
                     <label class="form-check-label text-muted">
                       <input type="checkbox" class="form-check-input">
                       Keep me signed in
                     </label>
-                  </div>
+                  </div> --}}
                   {{-- <a href="#" class="auth-link text-black">Forgot password?</a> --}}
                 </div>
                 {{-- <div class="mb-2">

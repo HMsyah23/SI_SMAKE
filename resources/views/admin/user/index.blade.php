@@ -89,12 +89,19 @@
                       <button class="file-upload-browse btn btn-primary" type="button">Unggah</button>
                     </span>
                   </div>
+                  <span for="">*Foto Harus Memiliki Format .jpg/jpeg/png</span> <br>
+                  <span for="">*Ukuran foto maksimal 2048Kb / 2Mb</span>
                 </div>
                 <label for="">*Wajib Diisi</label>
               </div>
             </div>
             <div class="d-flex justify-content-end">
-              <button type="submit" class="btn btn-primary"><i class="ti-save"></i> Simpan</button>
+              <button disabled id="loader" class="btn btn-primary mr-2">
+                <div class="spinner-border" role="status">
+                  <span class="sr-only">Loading...</span>
+                </div>
+              </button>
+              <button type="submit" class="btn btn-primary perbarui"><i class="ti-save"></i> Simpan</button>
             </div>
           </form>
         </div>
@@ -106,6 +113,7 @@
 @push('js')
   <script>
     $(document).ready(function() {
+      $('#loader').hide();
       $('#surat').DataTable( {
         "ajax": `${BASE_URL}/api/users`,
         "columns" : [
@@ -165,13 +173,20 @@
             data: data,
             processData: false,
             contentType: false,
+            beforeSend: function () {
+              $('#loader').show();
+              $('.perbarui').prop('disabled', true);
+            },
+            complete: function() {
+              $('#loader').hide();
+              $('.perbarui').prop('disabled', false);
+            },
             success: function(result){
               $("#surat").DataTable().ajax.reload();
               Toast.fire({
                 title: result.status,
                 icon: 'success',
               })
-              console.log(result);
               $('#closeModal').trigger('click');  
               $('#nama').val("");
               $('#email').val("");
@@ -186,7 +201,6 @@
                 text: `${errors.message}`,
                 icon: 'error',
               })
-              console.log(result);
             },
           });
         } else {

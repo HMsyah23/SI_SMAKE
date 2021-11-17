@@ -16,4 +16,9 @@ class Divisi extends Model
         'kode',
         'divisi',
     ];
+
+    public function suratMasuks()
+    {
+        return $this->hasMany(SuratMasuk::class);
+    }
 }

@@ -64,19 +64,19 @@
             <div class="row">
               <div class="col-md-12 mb-3">
                 <label class="form-label">Nomor Surat</label>
-                <input type="text" id="nomor" class="form-control form-control-sm" placeholder="Masukkan Nomor Surat"/>
+                <input required type="text" id="nomor" class="form-control form-control-sm" placeholder="Masukkan Nomor Surat"/>
               </div>
               <div class="col-md-12 mb-3">
                 <label class="form-label">Asal Surat</label>
-                <input type="text" id="asal" class="form-control form-control-sm" placeholder="Masukkan Asal Surat"/>
+                <input required type="text" id="asal" class="form-control form-control-sm" placeholder="Masukkan Asal Surat"/>
               </div>
               <div class="col-md-12 mb-3">
                   <label>Tanggal Surat</label>
-                  <input type="date" id="tanggal_surat" class="form-control form-control-sm" placeholder="Masukkan Tanggal Surat">
+                  <input required type="date" id="tanggal_surat" class="form-control form-control-sm" placeholder="Masukkan Tanggal Surat">
               </div>
               <div class="col-md-12 mb-3">
                   <label>Tanggal Terima</label>
-                  <input type="date" id="tanggal_terima" class="form-control form-control-sm" placeholder="Masukkan Tanggal Terima">
+                  <input required type="date" id="tanggal_terima" class="form-control form-control-sm" placeholder="Masukkan Tanggal Terima">
               </div>
               <div class="col-md-12 mb-3">
                 <label>Divisi*</label>
@@ -84,23 +84,30 @@
               </div>
               <div class="col-md-12 mb-3">
                 <label class="form-label">Perihal</label>
-                <textarea class="form-control form-control-sm" id="perihal" placeholder="Masukkan Perihal Surat Masuk" rows="4"></textarea>
+                <textarea required class="form-control form-control-sm" id="perihal" placeholder="Masukkan Perihal Surat Masuk" rows="4"></textarea>
               </div>
               <div class="col-md-12 mb-3">
                 <div class="form-group">
-                  <label>File Surat</label>
+                  <label>File Surat*</label>
                   <input type="file" id="file_surat" class="file-upload-default">
                   <div class="input-group col-xs-12">
-                    <input id="uploadFile" type="text" class="form-control form-control-sm file-upload-info" disabled placeholder="Upload File Surat Masuk">
+                    <input  id="uploadFile" type="text" class="form-control form-control-sm file-upload-info" disabled placeholder="Upload File Surat Masuk">
                     <span class="input-group-append">
                       <button class="file-upload-browse btn btn-primary" type="button">Unggah</button>
                     </span>
                   </div>
+                  <span for="">*File Harus Memiliki Format .pdf</span> <br>
+                  <span for="">*Ukuran file maksimal 2048Kb / 2Mb</span>
                 </div>
               </div>
             </div>
             <div class="d-flex justify-content-end">
-              <button type="submit" class="btn btn-primary"><i class="ti-save"></i> Simpan</button>
+              <button disabled id="loader" class="btn btn-primary mr-2">
+                <div class="spinner-border" role="status">
+                  <span class="sr-only">Loading...</span>
+                </div>
+              </button>
+              <button type="submit" class="btn btn-primary perbarui"><i class="ti-save"></i> Simpan</button>
             </div>
           </form>
         </div>
@@ -112,6 +119,10 @@
 @push('js')
   <script>
     $(document).ready(function() {
+      $('#loader').hide();
+      $('#tanggal_surat').val(new Date().toDateInputValue());
+      $('#tanggal_terima').val(new Date().toDateInputValue());
+
       $('#surat').DataTable( {
         "ajax": `${BASE_URL}/api/suratMasuks`,
         "columns" : [
@@ -161,7 +172,7 @@
   
     $('#ajaxSubmit').on('submit', function(e){
       e.preventDefault();
-        if($('#divisi').val() != null){
+        if($('#divisi').val() != null || $('#file_surat').prop('files')[0] != null){
           let data = new FormData();
           data.append('divisi', $('#divisi').val());
           data.append('nomor'  , $('#nomor').val());
@@ -176,18 +187,25 @@
             data: data,
             processData: false,
             contentType: false,
+            beforeSend: function () {
+              $('#loader').show();
+              $('.perbarui').prop('disabled', true);
+            },
+            complete: function() {
+              $('#loader').hide();
+              $('.perbarui').prop('disabled', false);
+            },
             success: function(result){
               $("#surat").DataTable().ajax.reload();
               Toast.fire({
                 title: result.status,
                 icon: 'success',
               })
-              console.log(result);
               $('#closeModal').trigger('click');  
               $('#nomor').val("");
               $('#asal').val("");
-              $('#tanggal_surat').val("");
-              $('#tanggal_terima').val("");
+              $('#tanggal_surat').val(new Date().toDateInputValue());
+              $('#tanggal_terima').val(new Date().toDateInputValue());
               $('#perihal').val("");
               $('#file').val("");
               $('#uploadFile').val("");
@@ -200,7 +218,6 @@
                 text: `${errors.message}`,
                 icon: 'error',
               })
-              console.log(result);
             },
           });
         } else {
@@ -217,7 +234,7 @@
     function deleteFunction(id){
         Swal.fire({
             icon: 'info',
-            title: `Apakah Kamu Ingin Menghapus Pengguna Ini ?`,
+            title: `Apakah kamu ingin menghapus data surat masuk ini ?`,
             showDenyButton: true,
             confirmButtonText: 'Hapus',
             denyButtonText: `Jangan Hapus`,
@@ -233,7 +250,6 @@
                   error:    function(result){
                     let errors = result.responseJSON;
                         Toast.fire(errors.status, '', 'info')
-                        console.log(result);
                   },
                 });
             } else if (result.isDenied) {

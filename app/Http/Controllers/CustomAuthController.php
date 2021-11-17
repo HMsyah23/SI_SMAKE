@@ -30,8 +30,8 @@ class CustomAuthController extends Controller
             return redirect()->intended('admin/dashboard')
                         ->withSuccess('Signed in');
         }
-  
-        return redirect("login")->withSuccess('Login details are not valid');
+
+        return redirect("login")->with(['error' => 'Email Atau Password Tidak Cocok']);
     }
 
 
@@ -70,7 +70,11 @@ class CustomAuthController extends Controller
     public function dashboard()
     {
         if(Auth::check()){
-            return view('admin.index');
+            if (Auth::user()->role->name == 'Admin') {
+                return view('admin.index');
+            } else {
+                return view('admin.user');
+            }
         }
   
         return redirect("login")->withSuccess('You are not allowed to access');

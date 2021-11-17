@@ -20,10 +20,12 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::resource('users',UserController::class);
+Route::put('users/{user}/changePassword',[UserController::class,'changePassword']);
 Route::resource('roles',RoleController::class);
 Route::resource('divisis',DivisiController::class);
 Route::resource('suratMasuks',SuratMasukController::class);
 Route::resource('suratMasuks',SuratMasukController::class);
 Route::get('suratMasuks/filter/{year}',[SuratMasukController::class,'filter']);
+Route::get('suratMasuks/divisi/{divisi}',[SuratMasukController::class,'divisi']);
 Route::resource('suratKeluars',SuratKeluarController::class);
 Route::get('suratKeluars/filter/{year}',[SuratKeluarController::class,'filter']);

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\SuratKeluar;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File; 
 
 class SuratKeluarController extends Controller
 {
@@ -27,7 +28,7 @@ class SuratKeluarController extends Controller
         if($request->file('file') == null){
             $file = null;
         } else {
-            $fileName = bcrypt(time()).'.'.$request->file->getClientOriginalExtension();
+            $fileName = md5(time()).'.'.$request->file->getClientOriginalExtension();
             $filePath = $request->file('file')->storeAs('surat/keluar', $fileName, 'public');
             $file = $filePath;
         }
@@ -61,8 +62,8 @@ class SuratKeluarController extends Controller
             $request->validate([
                 'file' => 'mimes:pdf|max:2048'
             ]);
-    
-            $fileName = bcrypt(time()).'.'.$request->file->getClientOriginalExtension();
+            File::delete($suratKeluar->file);
+            $fileName = md5(time()).'.'.$request->file->getClientOriginalExtension();
             $filePath = $request->file('file')->storeAs('surat/keluar', $fileName, 'public');
             $file = $filePath;
         }
@@ -80,6 +81,7 @@ class SuratKeluarController extends Controller
 
     public function destroy(SuratKeluar $suratKeluar)
     {
+        File::delete($suratKeluar->file);
         $suratKeluar->delete();
         return response()->json(['data' => ['status' => 'Data Surat Keluar Berhasil Dihapus']],200);
     }

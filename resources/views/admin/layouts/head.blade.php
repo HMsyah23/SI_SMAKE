@@ -41,7 +41,7 @@
               <img src="{{ (Auth::user()->picture != null) ? '/'.Auth::user()->picture : asset('assets/admin/images/faces/face28.jpg') }}" alt="profile"/>
             </a>
             <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
-              <a class="dropdown-item">
+              <a class="dropdown-item" href="{{ route('user.edit',Auth::user()->id) }}">
                 <i class="ti-settings text-primary"></i>
                 Settings
               </a>

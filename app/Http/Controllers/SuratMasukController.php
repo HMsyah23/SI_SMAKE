@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Arr;
 use App\Models\SuratMasuk;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File; 
 
 class SuratMasukController extends Controller
 {
@@ -28,7 +29,7 @@ class SuratMasukController extends Controller
         if($request->file('file') == null){
             $file = null;
         } else {
-            $fileName = bcrypt(time()).'.'.$request->file->getClientOriginalExtension();
+            $fileName = md5(time()).'.'.$request->file->getClientOriginalExtension();
             $filePath = $request->file('file')->storeAs('surat/masuk', $fileName, 'public');
             $file = $filePath;
         }
@@ -64,8 +65,8 @@ class SuratMasukController extends Controller
             $request->validate([
                 'file' => 'mimes:pdf|max:2048'
             ]);
-    
-            $fileName = bcrypt(time()).'.'.$request->file->getClientOriginalExtension();
+            File::delete($suratMasuk->file);
+            $fileName = md5(time()).'.'.$request->file->getClientOriginalExtension();
             $filePath = $request->file('file')->storeAs('surat/masuk', $fileName, 'public');
             $file = $filePath;
         }
@@ -85,6 +86,7 @@ class SuratMasukController extends Controller
 
     public function destroy(SuratMasuk $suratMasuk)
     {
+        File::delete($suratMasuk->file);
         $suratMasuk->delete();
         return response()->json(['data' => ['status' => 'Data Surat Masuk Berhasil Dihapus']],200);
     }
@@ -109,5 +111,10 @@ class SuratMasukController extends Controller
         }
 
         return response()->json(['data' => $result], 200);
+    }
+
+    public function divisi($divisi){
+        $data = SuratMasuk::where('divisi_id',$divisi)->get();
+        return response()->json(['data' => $data], 200);
     }
 }

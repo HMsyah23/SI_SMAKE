@@ -164,7 +164,6 @@
                 title: result.status,
                 icon: 'success',
               })
-              console.log(result);
               $('#closeModal').trigger('click');  
               $('#name').val("");
               $('#role').val("");
@@ -177,7 +176,6 @@
                 text: `${errors.message}`,
                 icon: 'error',
               })
-              console.log(result);
             },
           });
         } else {
@@ -206,7 +204,6 @@
                 title: result.status,
                 icon: 'success',
               })
-              console.log(result);
               $('#closeModalUp').trigger('click');  
               $('#kode').val("");
               $('#nama').val("");
@@ -219,7 +216,6 @@
                 text: `${errors.message}`,
                 icon: 'error',
               })
-              console.log(result);
             },
           });
         } else {
@@ -235,7 +231,7 @@
     function deleteFunction(id){
         Swal.fire({
             icon: 'info',
-            title: `Apakah Kamu Ingin Menghapus Akun Ini ?`,
+            title: `Apakah Kamu Ingin Menghapus Peran Ini ?`,
             showDenyButton: true,
             confirmButtonText: 'Hapus',
             denyButtonText: `Jangan Hapus`,

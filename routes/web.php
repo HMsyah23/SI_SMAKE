@@ -20,14 +20,8 @@ use App\Http\Controllers\SuratKeluarController;
 */
 
 Route::get('/', function () {
-    return view('auth.login');
+    return view('index');
 });
-
-Route::get('admin/home', function () {
-    return view('admin.index');
-})->name('home');
-
-
 
 Route::get('changeNav', function () {
     $state = Session::get('navbarState');
@@ -47,9 +41,7 @@ Route::get('registration', [CustomAuthController::class, 'registration'])->name(
 Route::post('custom-registration', [CustomAuthController::class, 'customRegistration'])->name('register.custom'); 
 
 Route::group(['prefix'=>'admin','middleware' => ['auth']], function () { 
-    Route::get('user', function () {
-        return view('admin.user.index');
-    })->name('user');
+    Route::get('user', [UserController::class, 'create'])->name('user'); 
     
     Route::get('surat/masuk', function () {
         return view('admin.suratMasuk.index');

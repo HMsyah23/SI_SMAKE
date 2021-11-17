@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use Hash;
+use Auth;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File; 
 
 class UserController extends Controller
 {
@@ -19,8 +22,12 @@ class UserController extends Controller
     }
 
     public function create()
-    {
-
+    {   
+        if (Auth::user()->role->name == 'Admin') {
+            return view('admin.user.index');
+        } else {
+            return redirect()->route('user.edit',Auth::user()->id); 
+        }
     }
 
     public function edit(User $user)
@@ -37,7 +44,7 @@ class UserController extends Controller
         if($request->file('picture') == null){
             $pic = null;
         } else {
-            $fileName = bcrypt(time()).'.'.$request->picture->getClientOriginalExtension();
+            $fileName = md5(time()).'.'.$request->picture->getClientOriginalExtension();
             $filePath = $request->file('picture')->storeAs('picture', $fileName, 'public');
             $pic = $filePath;
         }
@@ -57,7 +64,8 @@ class UserController extends Controller
         if($request->file('picture') == null){
             $file = $user->picture;
         } else {
-            $fileName = bcrypt(time()).'.'.$request->picture->getClientOriginalExtension();
+            File::delete($user->picture); 
+            $fileName = md5(time()).'.'.$request->picture->getClientOriginalExtension();
             $filePath = $request->file('picture')->storeAs('picture', $fileName, 'public');
             $file = $filePath;
         }
@@ -67,7 +75,6 @@ class UserController extends Controller
             'email'     => $request['email'],
             'role_id'   => $request['peran'],
             'divisi_id' => $request['divisi'],
-            'password'  => bcrypt('password'), 
             'picture'  => $file 
         ]);
         $user = User::find($user->id)->with(['divisi','role'])->first();
@@ -76,9 +83,21 @@ class UserController extends Controller
 
     public function destroy($id)
     {
-        $data = User::findOrFail($id);        
+        $data = User::findOrFail($id);       
+        File::delete($data->picture); 
         $data->delete();
 
         return response()->json(['data' => ['status' => 'Data Berhasil Dihapus']]);
+    }
+
+    public function changePassword(Request $request,User $user)
+    {
+        if(Hash::check($request->old,$user->password)){
+            $user->update([
+                'password' => bcrypt($request->new), 
+            ]);
+            return response()->json(['data' => ['status' => 'Password Berhasil Diperbarui']]);
+        }
+        return response()->json(['data' => ['status' => 'Kata Sandi Lama Tidak Cocok']]);
     }
 }

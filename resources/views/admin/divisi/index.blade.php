@@ -70,7 +70,12 @@
               </div>
             </div>
             <div class="d-flex justify-content-end">
-              <button type="button" id="ajaxSubmit" class="btn btn-primary"><i class="ti-save"></i> Simpan</button>
+              <button disabled id="loader" class="btn btn-primary mr-2">
+                <div class="spinner-border" role="status">
+                  <span class="sr-only">Loading...</span>
+                </div>
+              </button>
+              <button type="button" id="ajaxSubmit" class="btn btn-primary perbarui"><i class="ti-save"></i> Simpan</button>
             </div>
           </form>
         </div>
@@ -111,6 +116,7 @@
 @push('js')
   <script>
     $(document).ready(function() {
+      $('#loader').hide();
       $('#surat').DataTable( {
         "ajax": `${BASE_URL}/api/divisis`,
         "columns" : [
@@ -154,13 +160,20 @@
               kode: $('#kode').val(),
               nama: $('#nama').val()
             },
+            beforeSend: function () {
+              $('#loader').show();
+              $('.perbarui').prop('disabled', true);
+            },
+            complete: function() {
+              $('#loader').hide();
+              $('.perbarui').prop('disabled', false);
+            },
             success: function(result){
               $("#surat").DataTable().ajax.reload();
               Toast.fire({
                 title: result.status,
                 icon: 'success',
               })
-              console.log(result);
               $('#closeModal').trigger('click');  
               $('#kode').val("");
               $('#nama').val("");
@@ -173,7 +186,6 @@
                 text: `${errors.message}`,
                 icon: 'error',
               })
-              console.log(result);
             },
           });
         } else {
@@ -202,7 +214,6 @@
                 title: result.status,
                 icon: 'success',
               })
-              console.log(result);
               $('#closeModalUp').trigger('click');  
               $('#kode').val("");
               $('#nama').val("");
@@ -215,7 +226,6 @@
                 text: `${errors.message}`,
                 icon: 'error',
               })
-              console.log(result);
             },
           });
         } else {
@@ -231,7 +241,7 @@
     function deleteFunction(id){
         Swal.fire({
             icon: 'info',
-            title: `Apakah Kamu Ingin Menghapus Akun Ini ?`,
+            title: `Apakah Kamu Ingin Menghapus Divisi Ini ?`,
             showDenyButton: true,
             confirmButtonText: 'Hapus',
             denyButtonText: `Jangan Hapus`,
