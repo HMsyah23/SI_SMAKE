@@ -77,7 +77,7 @@ class UserController extends Controller
             'divisi_id' => $request['divisi'],
             'picture'  => $file 
         ]);
-        $user = User::find($user->id)->with(['divisi','role'])->first();
+        $user = User::where('id',$user->id)->with(['divisi','role'])->first();
         return response()->json(['data' => $user,'status' => 'Data Pengguna Berhasil Diperbarui'], 200);
     }
 

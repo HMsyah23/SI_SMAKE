@@ -20,7 +20,7 @@
           </ul>
         </div>
       </li>
-      <li class="nav-item {{ (Route::current()->getName() == 'user') ? 'active' : '' }} ">
+      <li class="nav-item {{ (str_contains(url()->current(), 'user')) ? 'active' : '' }} ">
         <a class="nav-link" href="{{ route('user') }}">
           <i class="ti-user menu-icon"></i>
           <span class="menu-title">Pengguna</span>
