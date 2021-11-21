@@ -7,6 +7,11 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SuratMasukController;
 use App\Http\Controllers\SuratKeluarController;
+use App\Http\Controllers\GaleriController;
+use App\Http\Controllers\BeritaController;
+use App\Http\Controllers\ProfilController;
+use App\Http\Controllers\InformasiController;
+use App\Http\Controllers\HomeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,9 +24,12 @@ use App\Http\Controllers\SuratKeluarController;
 |
 */
 
-Route::get('/', function () {
-    return view('index');
-});
+
+Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/profil', [HomeController::class, 'profil'])->name('profil');
+Route::get('/berita', [HomeController::class, 'berita'])->name('berita');
+Route::get('/galeri', [HomeController::class, 'galeri'])->name('galeri');
+Route::get('/kontak', [HomeController::class, 'kontak'])->name('kontak');
 
 Route::get('changeNav', function () {
     $state = Session::get('navbarState');
@@ -51,6 +59,24 @@ Route::group(['prefix'=>'admin','middleware' => ['auth']], function () {
         return view('admin.suratKeluar.index');
     })->name('surat.keluar');
 
+    Route::get('galeri', function () {
+        return view('admin.galeri.index');
+    })->name('galeri');
+
+    Route::get('berita', function () {
+        return view('admin.berita.index');
+    })->name('berita');
+
+    Route::get('informasi', function () {
+        return view('admin.informasi.index');
+    })->name('informasi');
+
+    Route::get('profil', function () {
+        return view('admin.profil.index');
+    })->name('profil');
+
+    Route::get('berita/create', [BeritaController::class, 'create'])->name('beritas.create');
+
     Route::get('dashboard', [CustomAuthController::class, 'dashboard'])->name('dashboard'); 
     Route::get('signout', [CustomAuthController::class, 'signOut'])->name('signout');
     Route::get('roles', [RoleController::class, 'home'])->name('roles');
@@ -58,4 +84,8 @@ Route::group(['prefix'=>'admin','middleware' => ['auth']], function () {
     Route::get('users/{user}/edit', [UserController::class, 'edit'])->name('user.edit');
     Route::get('surat/masuk/{suratMasuk}/edit', [SuratMasukController::class, 'edit'])->name('suratMasuk.edit');
     Route::get('surat/keluar/{suratKeluar}/edit', [SuratKeluarController::class, 'edit'])->name('suratKeluar.edit');
+    Route::get('galeri/{galeri}/edit', [GaleriController::class, 'edit'])->name('galeri.edit');
+    Route::get('berita/{berita}/edit', [BeritaController::class, 'edit'])->name('berita.edit');
+    Route::get('profil/{profil}/edit', [ProfilController::class, 'edit'])->name('profil.edit');
+    Route::get('informasi/{informasi}/edit', [InformasiController::class, 'edit'])->name('informasi.edit');
 });
