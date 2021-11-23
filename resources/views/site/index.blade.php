@@ -90,7 +90,7 @@
 					<div class="col-lg-3 col-md-6 col-sm-6">
 						<div class="counter-stat">
 							<i class="icofont-doctor"></i>
-							<span class="h3">58</span>k
+							<span class="h3">58</span>
 							<p>Happy People</p>
 						</div>
 					</div>
@@ -105,7 +105,7 @@
 					<div class="col-lg-3 col-md-6 col-sm-6">
 						<div class="counter-stat">
 							<i class="icofont-badge"></i>
-							<span class="h3">40</span>+
+							<span class="h3">40</span>
 							<p>Tenaga Ahli</p>
 						</div>
 					</div>

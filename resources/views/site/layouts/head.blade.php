@@ -31,7 +31,7 @@
 			<div class="row align-items-center">
 				<div class="col-lg-6">
 					<ul class="top-bar-info list-inline-item pl-0 mb-0">
-						<li class="list-inline-item"><a href="mailto:support@gmail.com"><i class="icofont-support-faq mr-2"></i>admin@info.gov</a></li>
+						<li class="list-inline-item"><a href="mailto:support@gmail.com"><i class="icofont-support-faq mr-2"></i><strong id="emailWebsite">Email</strong></a></li>
 						<li class="list-inline-item"><i class="icofont-location-pin mr-2"></i>Jl. Biola No.2, Sungai Pinang Luar</li>
 					</ul>
 				</div>

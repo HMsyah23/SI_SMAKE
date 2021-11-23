@@ -104,7 +104,7 @@
     =====================================-->
     
     <!-- Main jQuery -->
-    <script src="{{ asset('assets/plugins/jquery/jquery.js')}}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
     <!-- Bootstrap 4.3.2 -->
     <script src="{{ asset('assets/plugins/bootstrap/js/popper.js')}}"></script>
     <script src="{{ asset('assets/plugins/bootstrap/js/bootstrap.min.js')}}"></script>
@@ -122,6 +122,39 @@
     
     <script src="{{ asset('assets/js/script.js')}}"></script>
     <script src="{{ asset('assets/js/contact.js')}}"></script>
+	<script>
+		let BASE_URL = '{!! url('/') !!}';
+		let YEAR = 2021;
+		$.ajaxSetup({
+			headers: {
+				'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+			}
+		});
+
+		function getInformasi() {
+			const url = `${BASE_URL}/api/informasis`;
+			$.getJSON(url, function (result) {
+				console.log(result.data);
+					$('#emailWebsite').text(result.data[1].deskripsi);
+					$('#alamatWebsite').text(result.data[1].deskripsi);
+					$('#nomorWebsite').text(result.data[1].deskripsi);
+					$('#facebookWebsite').text(result.data[1].deskripsi);
+					$('#twitterWebsite').text(result.data[1].deskripsi);
+					$('#googleWebsite').text(result.data[1].deskripsi);
+					$('#instagramWebsite').text(result.data[1].deskripsi);
+					$('#whatsappWebsite').text(result.data[1].deskripsi);
+					$('#youtubeWebsite').text(result.data[1].deskripsi);
+					$('#mapsWebsite').text(result.data[1].deskripsi);
+					$('#divisiWebsite').text(result.data[1].deskripsi);
+					$('#pegawaiWebsite').text(result.data[1].deskripsi);
+					$('#tanahWebsite').text(result.data[1].deskripsi);
+					$('#tenagaAhliWebsite').text(result.data[1].deskripsi);
+			});
+    	}
+		$(document).ready(function() {
+			getInformasi();
+		});
+	</script>
     @stack('js')
 
   </body>
