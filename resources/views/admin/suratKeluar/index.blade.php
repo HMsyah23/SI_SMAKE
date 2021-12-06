@@ -168,6 +168,27 @@
     $(document).ready(function() {
       $('#loader').hide();
       $('#tanggal_keluar').val(new Date().toDateInputValue());
+      let maxField = 10; //Input fields increment limitation
+      let addButton = $('.add_button'); //Add button selector
+      let wrapper = $('.field_wrapper'); //Input field wrapper
+      let fieldHTML = '<div class="d-flex justify-content-between mt-1 mb-1"><input name="lampiran" type="file" class="form-control form-control-sm file-upload-info files" placeholder="Upload Lampiran"><button type="button" class="btn btn-outline-danger btn-rounded btn-icon remove_button"><i class="ti-minus"></i></button></div>'; //New input field html 
+      let x = 1; //Initial field counter is 1
+      
+      //Once add button is clicked
+      $(addButton).click(function(){
+          //Check maximum number of input fields
+          if(x < maxField){ 
+              x++; //Increment field counter
+              $(wrapper).append(fieldHTML); //Add field html
+          }
+      });
+      
+      //Once remove button is clicked
+      $(wrapper).on('click', '.remove_button', function(e){
+          e.preventDefault();
+          $(this).parent('div').remove(); //Remove field html
+          x--; //Decrement field counter
+      });
       
       $('#surat').DataTable( {
         "ajax": `${BASE_URL}/api/suratKeluars`,
@@ -192,6 +213,7 @@
           { 
             "data": "id",
             "render": function ( data, type, row, meta ) {
+              @if (Auth::user()->id === "0797f5f9-7312-4d6d-ac1a-803af987af32")
                 return `<div class="btn-group" role="group" aria-label="Basic example">
                   <button onClick="modalKeluarFunction('${data}')" type="button" class="btn btn-info">
                           <i class="ti-eye"></i>
@@ -203,6 +225,13 @@
                           <i class="ti-trash"></i>
                         </button>
                       </div>`
+              @else
+              return `<div class="btn-group" role="group" aria-label="Basic example">
+                  <button onClick="modalKeluarFunction('${data}')" type="button" class="btn btn-info">
+                          <i class="ti-eye"></i>
+                        </button>
+                      </div>`
+              @endif
             }
           }
         ],
@@ -218,10 +247,16 @@
     $('#ajaxSubmitKeluar').on('submit', function(e){
       e.preventDefault();
       let data = new FormData();
+      let divisi = '{{ Auth::user()->divisi->id }}';
       data.append('nomor_surat', $('#nomor_surat_keluar').val());
       data.append('tujuan_surat', $('#tujuan').val());
-      data.append('perihal', $('#perihal').val());
+      data.append('perihal', $('#perihalss').val());
       data.append('isValid', 1);
+      data.append('divisi_id' , divisi);
+      data.append('file', $('#file_surat').prop('files')[0]);
+      $('form input[name=lampiran]').each(function(){
+        data.append('lampiran[]' ,$(this).prop('files')[0]);
+      });
       data.append('tanggal_validasi', new Date().toDateInputValue()); 
       $.ajax({
         url: `${BASE_URL}/api/suratKeluars/`,
@@ -244,7 +279,7 @@
             title: result.status,
             icon: 'success',
           })
-          $('#closeModal').trigger('click');  
+          $('#closeModalSuratKeluar').trigger('click');  
           $('#nomor_surat_keluar').val("");
         },
         error: function(result){
@@ -307,7 +342,7 @@
             $('#stat').append(`<div class="badge badge-success">Telah Divalidasi</div>`);
           }
           $('#file_surat_keluar').attr('href',`${BASE_URL}/${result.data.file}`);
-          $.each(result.data.lampiran, function(k, v) {
+          $.each(JSON.parse(result.data.lampiran), function(k, v) {
             $('#lampir').append(`<a href="/lampiran/surat/keluar/${v}" target="_blank" class="btn btn-sm btn-outline-primary ml-1">Lampiran ${k+1}</a>`);
           });
         },
@@ -318,55 +353,5 @@
       });
       }
 
-      $('#ajaxSubmitKeluar').on('submit', function(e){
-      e.preventDefault();
-      let data = new FormData();
-      data.append('nomor_surat', $('#nomor_surat_keluar').val());
-      data.append('tujuan_surat', $('#tujuan').val());
-      data.append('isValid', 1);
-      data.append('tanggal_validasi', new Date().toDateInputValue());
-      let divisi = '{{ Auth::user()->divisi->id }}';
-      var lampiran = [];
-      data.append('perihal' , $('#perihalss').val());
-      data.append('divisi_id' , divisi);
-      $('form input[name=lampiran]').each(function(){
-        data.append('lampiran[]' ,$(this).prop('files')[0]);
-      });
-      data.append('file', $('#file_surat').prop('files')[0]);
-      $.ajax({
-        url: `${BASE_URL}/api/suratKeluars`,
-        method: 'post',
-        data: data,
-        processData: false,
-        contentType: false,
-        beforeSend: function () {
-          $('#loader').show();
-          $('.perbarui').prop('disabled', true);
-        },
-        complete: function() {
-          $('#loader').hide();
-          $('.perbarui').prop('disabled', false);
-        },
-        success: function(result){
-          $("#suratKeluar").DataTable().ajax.reload();
-          console.log(result.status);
-          Toast.fire({
-            title: result.status,
-            icon: 'success',
-          })
-          $('#closeModalValidasi').trigger('click');  
-          $('#nomor_surat_keluar').val("");
-        },
-        error: function(result){
-          let errors = result.responseJSON;
-          let myArray = errors.message;
-          Toast.fire({
-            title: 'Terdapat parameter yang belum diisi',
-            text: `${errors.message}`,
-            icon: 'error',
-          })
-        },
-      });
-    });
   </script>
 @endpush

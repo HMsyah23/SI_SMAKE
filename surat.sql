@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 23, 2021 at 04:10 PM
+-- Generation Time: Dec 07, 2021 at 12:51 AM
 -- Server version: 10.4.21-MariaDB
 -- PHP Version: 7.4.25
 
@@ -68,9 +68,10 @@ CREATE TABLE `divisis` (
 
 INSERT INTO `divisis` (`id`, `kode`, `divisi`, `created_at`, `updated_at`) VALUES
 ('38b7ffbf-55b1-4c61-9b33-54e31561e433', 'Keuangan', 'Keuangan', '2021-11-14 10:38:54', '2021-11-14 10:38:54'),
-('5c4b32de-c947-4e91-b3a9-7c82666b881c', 'KETUA', 'Ketua Divisi', '2021-11-14 10:37:01', '2021-11-14 10:37:01'),
-('94fb267c-528c-4a59-a20b-91cf15c4a807', 'TU', 'Tata Usaha', '2021-11-14 09:52:19', '2021-11-14 09:52:19'),
-('b7c54b1e-2b59-489b-9b5b-d95cc633f0df', 'Perencanaan', 'Perencanaan', '2021-11-14 09:52:43', '2021-11-14 09:52:43');
+('5c4b32de-c947-4e91-b3a9-7c82666b881c', 'KETUA', 'Ketua UPTD', '2021-11-14 10:37:01', '2021-12-04 17:27:31'),
+('94fb267c-528c-4a59-a20b-91cf15c4a807', 'TU', 'Sub Bagian Tata Usaha', '2021-11-14 09:52:19', '2021-12-04 17:26:15'),
+('b7c54b1e-2b59-489b-9b5b-d95cc633f0df', 'Perencanaan', 'Seksi Perencanaan dan Pemanfaatan Hutan', '2021-11-14 09:52:43', '2021-12-04 17:26:24'),
+('ba5c192c-82b8-494b-b299-8b0fc36b68d3', 'Perlindungan', 'Seksi Perlindungan, KSDAE dan Pemberdayaan Masyarakat', '2021-12-04 17:27:14', '2021-12-04 17:27:14');
 
 -- --------------------------------------------------------
 
@@ -241,8 +242,11 @@ CREATE TABLE `roles` (
 --
 
 INSERT INTO `roles` (`id`, `name`, `role`, `created_at`, `updated_at`) VALUES
-('6539054c-6aa5-48ec-bc3b-a235f135c923', 'Admin', 'Administrator', '2021-11-14 11:12:07', '2021-11-14 11:12:07'),
-('f7e9d614-e732-4669-9a8f-4c719f29a6af', 'User', 'User', '2021-11-14 11:12:17', '2021-11-14 11:12:17');
+('219dd050-96b9-47bb-9727-b6cf6a84fac8', 'Ketua', 'Ketua UPTD', '2021-12-02 02:49:42', '2021-12-02 02:49:47'),
+('6539054c-6aa5-48ec-bc3b-a235f135c923', 'Super Admin', 'Administrator', '2021-11-14 11:12:07', '2021-11-14 11:12:07'),
+('71e61563-591c-4800-8485-ae51f509bdf9', 'Admin', 'Staf TU', '2021-11-29 00:45:19', '2021-11-29 00:45:19'),
+('73e819e5-0a2f-4493-9b4f-61bb02c5c03c', 'Ketua TU', 'Ketua TU', '2021-12-02 02:48:17', '2021-12-02 02:48:24'),
+('f7e9d614-e732-4669-9a8f-4c719f29a6af', 'User', 'Ketua Divisi', '2021-11-14 11:12:17', '2021-11-14 11:12:17');
 
 -- --------------------------------------------------------
 
@@ -252,11 +256,14 @@ INSERT INTO `roles` (`id`, `name`, `role`, `created_at`, `updated_at`) VALUES
 
 CREATE TABLE `surat_keluars` (
   `id` char(36) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `nomor_surat` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `divisi_id` char(36) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `nomor_surat` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `tujuan_surat` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `tanggal_keluar` date NOT NULL,
   `perihal` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `file` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `file` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `lampiran` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `tanggal_validasi` timestamp NULL DEFAULT NULL,
+  `isValid` tinyint(1) DEFAULT 0,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -269,15 +276,29 @@ CREATE TABLE `surat_keluars` (
 
 CREATE TABLE `surat_masuks` (
   `id` char(36) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `divisi_id` char(36) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `divisi_id` char(36) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `divisi` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `nomor_surat` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `asal_surat` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `tanggal_surat` date NOT NULL,
   `tanggal_terima` date NOT NULL,
   `perihal` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `noted` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `catatan` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `tanda_tangan` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `no_agenda` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `sifat` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `tipe` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `file` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `isValid` tinyint(1) NOT NULL DEFAULT 0,
+  `isDisposisi` tinyint(1) DEFAULT 0,
+  `isDistribusi` tinyint(1) DEFAULT 0,
+  `isDibaca` tinyint(1) DEFAULT 0,
   `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `tanggal_validasi` timestamp NULL DEFAULT NULL,
+  `tanggal_disposisi` timestamp NULL DEFAULT NULL,
+  `tanggal_dibaca` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -305,7 +326,11 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `role_id`, `divisi_id`, `nama`, `email`, `email_verified_at`, `password`, `picture`, `remember_token`, `created_at`, `updated_at`) VALUES
-('0797f5f9-7312-4d6d-ac1a-803af987af32', '6539054c-6aa5-48ec-bc3b-a235f135c923', '5c4b32de-c947-4e91-b3a9-7c82666b881c', 'Admin', 'admin@admin.com', NULL, '$2y$10$/tTOYnp0s6/WBuvj86c1suy/H1xe/ndz4hr.PepW1pOO24ZAUuBUm', 'picture/027670596d1e373d531f24e13abc7205.jpg', NULL, '2021-11-14 08:18:23', '2021-11-17 09:11:37');
+('0797f5f9-7312-4d6d-ac1a-803af987af32', '71e61563-591c-4800-8485-ae51f509bdf9', '94fb267c-528c-4a59-a20b-91cf15c4a807', 'Admin', 'admin@admin.com', NULL, '$2y$10$/tTOYnp0s6/WBuvj86c1suy/H1xe/ndz4hr.PepW1pOO24ZAUuBUm', 'picture/c71baf139c7c4221c18f46214a9736d7.jpg', NULL, '2021-11-14 08:18:23', '2021-12-04 17:36:21'),
+('36fb1c25-6d10-475e-9ef8-18cdedcc9023', 'f7e9d614-e732-4669-9a8f-4c719f29a6af', 'ba5c192c-82b8-494b-b299-8b0fc36b68d3', 'Divisi Perlindungan, KSDAE dan Pemberdayaan Masyarakat', 'divisi2@gmail.com', NULL, '$2y$10$jVq8m3ijNykKUm4FYYm95eK5Oc9BvIf/Hl78MOJxcfncG2DUCd6TS', 'picture/efe83823cac0b66cc04f70c1c3d8975e.jpg', NULL, '2021-12-04 17:31:05', '2021-12-04 17:31:05'),
+('4bbe7ad3-03f7-4a46-8bf4-da1a54349d50', '219dd050-96b9-47bb-9727-b6cf6a84fac8', '5c4b32de-c947-4e91-b3a9-7c82666b881c', 'Ketua UPTD', 'uptd@gmail.com', NULL, '$2y$10$/tTOYnp0s6/WBuvj86c1suy/H1xe/ndz4hr.PepW1pOO24ZAUuBUm', 'picture/f7cb38335c82d63230072edb79fb61b5.png', NULL, '2021-12-02 20:52:26', '2021-12-04 17:31:19'),
+('53e5335e-1422-4c76-8517-a15fb26efe80', '73e819e5-0a2f-4493-9b4f-61bb02c5c03c', '94fb267c-528c-4a59-a20b-91cf15c4a807', 'Ketua TU', 'ketuaTU@gmail.com', NULL, '$2y$10$/tTOYnp0s6/WBuvj86c1suy/H1xe/ndz4hr.PepW1pOO24ZAUuBUm', 'picture/027670596d1e373d531f24e13abc7205.jpg', NULL, NULL, NULL),
+('84b7c6e1-fb66-4270-998a-6df8c695e96e', 'f7e9d614-e732-4669-9a8f-4c719f29a6af', 'b7c54b1e-2b59-489b-9b5b-d95cc633f0df', 'Divisi Perencanaan dan Pemanfaatan Hutan', 'divisi1@gmail.com', NULL, '$2y$10$MyaQQcDHN.2gMMGuXxKKuuqcU05BpBFHLajK1j9FQR2XxrVFtZGWW', 'picture/c828e27fbdd332d8d3123449fda5dbd4.jpg', NULL, '2021-12-04 17:30:31', '2021-12-04 17:30:31');
 
 --
 -- Indexes for dumped tables
@@ -378,7 +403,8 @@ ALTER TABLE `roles`
 -- Indexes for table `surat_keluars`
 --
 ALTER TABLE `surat_keluars`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `suratkeluars_divisi_id_foreign` (`divisi_id`);
 
 --
 -- Indexes for table `surat_masuks`
@@ -421,6 +447,12 @@ ALTER TABLE `personal_access_tokens`
 --
 -- Constraints for dumped tables
 --
+
+--
+-- Constraints for table `surat_keluars`
+--
+ALTER TABLE `surat_keluars`
+  ADD CONSTRAINT `suratkeluars_divisi_id_foreign` FOREIGN KEY (`divisi_id`) REFERENCES `divisis` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `surat_masuks`

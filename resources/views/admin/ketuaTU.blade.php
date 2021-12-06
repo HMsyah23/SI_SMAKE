@@ -64,7 +64,7 @@
       <div class="card">
         <div class="card-body">
          <div class="d-flex justify-content-between">
-          <p class="card-title"><i class="ti-email"></i> Surat Masuk dan Keluar</p>
+          <p class="card-title"><i class="ti-email"></i> Validasi Surat Masuk</p>
           {{-- <a href="#" class="text-info"> <i class="ti-printer"></i></a> --}}
          </div>
          <div class="row">
