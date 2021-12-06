@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use Auth;
+use Image;
 use Illuminate\Support\Arr;
 use App\Models\SuratMasuk;
+use App\Models\Divisi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File; 
 
@@ -35,13 +38,15 @@ class SuratMasukController extends Controller
         }
 
         SuratMasuk::create([
-            'divisi_id'       => $request['divisi'],
             'nomor_surat'     => $request['nomor'],
             'asal_surat'      => $request['asal'],
             'tanggal_surat'   => $request['tanggal_surat'],
             'tanggal_terima'  => $request['tanggal_terima'],
-            'perihal'  => $request['perihal'],
-            'file'  => $file 
+            'no_agenda'       => $request['no_agenda'],
+            'sifat'           => $request['sifat'],
+            'tipe'            => $request['tipe'],
+            'perihal'         => $request['perihal'],
+            'file'            => $file 
         ]);
         return response()->json(['status' => 'Surat Masuk Berhasil Ditambahkan'], 200);
     }
@@ -49,7 +54,7 @@ class SuratMasukController extends Controller
 
     public function show(SuratMasuk $suratMasuk)
     {
-        //
+        return response()->json(['data' => $suratMasuk], 200);
     }
 
     public function edit(SuratMasuk $suratMasuk)
@@ -113,8 +118,83 @@ class SuratMasukController extends Controller
         return response()->json(['data' => $result], 200);
     }
 
-    public function divisi($divisi){
-        $data = SuratMasuk::where('divisi_id',$divisi)->get();
+    public function divisi(Divisi $divisi){
+        $data = SuratMasuk::whereLike('divisi',$divisi->id)->where('isDistribusi',1)->get();
         return response()->json(['data' => $data], 200);
+    }
+
+    public function validasi(SuratMasuk $suratMasuk)
+    {
+        $suratMasuk->update([
+            'isValid'  => 1,
+            'tanggal_validasi' => now()
+        ]);
+        $suratMasuk = SuratMasuk::find($suratMasuk->id)->first();
+        return response()->json(['data' => $suratMasuk,'status' => 'Surat berhasil divalidasi'], 200);
+    }
+
+    public function disposisi(SuratMasuk $suratMasuk,Request $request)
+    {   
+        $image = $request->tanda_tangan;  // your base64 encoded
+        $image = str_replace('data:image/png;base64,', '', $image);
+        $image = str_replace(' ', '+', $image);
+        $imageName = $suratMasuk->id.'.'.'png';
+
+        // use jpg format and quality of 100
+        $resized_image = Image::make(base64_decode($image))->resize(300, 200)->stream('png', 100);
+        // then use Illuminate\Support\Facades\Storage
+        \File::put(public_path(). '/tanda_tangan/' . $imageName, $resized_image);
+        $suratMasuk->update([
+            'isDisposisi'  => 1,
+            'divisi'       => $request->divisi,
+            'noted'        => $request->noted,
+            'catatan'      => $request->catatan,
+            'tanda_tangan' => '/tanda_tangan/' .$imageName,
+            'tanggal_disposisi' => now()
+        ]);
+        return response()->json(['data' => $suratMasuk,'status' => 'Surat berhasil di disposisi'], 200);
+    }
+
+    public function distribusi(SuratMasuk $suratMasuk)
+    {
+        $suratMasuk->update([
+            'isDistribusi'  => 1
+        ]);
+        return response()->json(['status' => 'Surat berhasil dikirim ke divisi terkait'], 200);
+    }
+
+    public function valid()
+    {
+        $data = SuratMasuk::where('isValid',1)->get();
+        return response()->json(['data' => $data], 200);
+    }
+
+    public function needValidation()
+    {
+        $data = SuratMasuk::where('isValid',0)->get();
+        return response()->json(['data' => $data], 200);
+    }
+
+    public function dispos()
+    {
+        $data = SuratMasuk::where('isValid',1)->where('isDisposisi',0)->get();
+        return response()->json(['data' => $data], 200);
+    }
+
+    public function distri()
+    {
+        $data = SuratMasuk::where('isDistribusi',0)->get();
+        return response()->json(['data' => $data], 200);
+    }
+
+    public function terbaca(SuratMasuk $suratMasuk,Request $request)
+    {
+        if (!$suratMasuk->isDibaca) {
+            $suratMasuk->update([
+                'isDibaca' => 1,
+                'tanggal_dibaca' => now()
+            ]);
+        }
+        return redirect('/'.$suratMasuk->file);
     }
 }

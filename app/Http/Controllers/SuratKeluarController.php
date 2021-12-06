@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use Auth;
 use App\Models\SuratKeluar;
+use App\Models\Divisi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File; 
 
@@ -21,9 +23,17 @@ class SuratKeluarController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'file' => 'required|mimes:pdf|max:2048'
-        ]);
+        if($request->hasfile('lampiran')){
+            foreach ($request->file('lampiran') as $image) {
+                $name=$image->getClientOriginalName();
+                $destinationPath = public_path('lampiran/surat/keluar/');
+                $image->move($destinationPath, $name);
+                File::exists($destinationPath) or File::makeDirectory($destinationPath, 0777, true, true);
+                $data[] = $name;
+            }
+        } else {
+            $data[] = NULL;
+        }
 
         if($request->file('file') == null){
             $file = null;
@@ -34,19 +44,23 @@ class SuratKeluarController extends Controller
         }
 
         SuratKeluar::create([
-            'nomor_surat'     => $request['nomor'],
-            'tujuan_surat'     => $request['tujuan'],
-            'tanggal_keluar'  => $request['tanggal_keluar'],
+            'nomor_surat'     => $request['nomor_surat'],
+            'tujuan_surat'     => $request['tujuan_surat'],
+            'divisi_id'  => $request['divisi_id'],
             'perihal'  => $request['perihal'],
-            'file'  => $file 
+            'file'  => $file,
+            'isValid'  => $request['isValid'],
+            'lampiran' => json_encode($data),
+            'tanggal_validasi' => $request['tanggal_validasi']
         ]);
         return response()->json(['status' => 'Surat Keluar Berhasil Ditambahkan'], 200);
     
     }
 
-    public function show(SuratKeluar $suratKeluar)
+    public function show($suratKeluar)
     {
-        //
+        $suratKeluar = SuratKeluar::where('id',$suratKeluar)->with('divisi')->first();
+        return response()->json(['data' => $suratKeluar], 200);
     }
 
     public function edit(SuratKeluar $suratKeluar)
@@ -106,5 +120,27 @@ class SuratKeluarController extends Controller
         }
 
         return response()->json(['data' => $result], 200);
+    }
+
+    public function divisi(Divisi $divisi){
+        $data = SuratKeluar::where('divisi_id',$divisi->id)->with('divisi')->get();
+        return response()->json(['data' => $data], 200);
+    }
+
+    public function validasi(SuratKeluar $suratKeluar,Request $request)
+    {
+        $suratKeluar->update([
+            'nomor_surat'  => $request->nomor_surat,
+            'isValid' => 1,
+            'tanggal_validasi' => now()
+        ]);
+        $suratKeluar = SuratKeluar::find($suratKeluar->id)->first();
+        return response()->json(['data' => $suratKeluar,'status' => 'Surat berhasil divalidasi'], 200);
+    }
+
+    public function needValidation()
+    {
+        $data = SuratKeluar::where('isValid',0)->get();
+        return response()->json(['data' => $data], 200);
     }
 }

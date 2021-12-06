@@ -50,11 +50,11 @@ class User extends Authenticatable
 
     public function role()
     {
-        return $this->belongsTo(Role::class);
+        return $this->belongsTo(Role::class,'role_id');
     }
 
     public function divisi()
     {
-        return $this->belongsTo(Divisi::class);
+        return $this->belongsTo(Divisi::class,'divisi_id');
     }
 }

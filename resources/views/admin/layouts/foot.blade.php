@@ -95,6 +95,78 @@
         },
       });
     });
+
+    function laporanDisposisi(id){
+      url = `${BASE_URL}/admin/lembarDisposisi/${id}`;
+      window.open(url, '_blank').focus();
+    }
+
+    function modalFunction(id){
+        $.ajax({
+          url: `${BASE_URL}/api/suratMasuks/${id}`,
+          method: 'get',
+          success: function(result){
+            $('#modalSurat').modal('show');
+            console.log(result);
+            $('#loader').hide();
+            if (result.data.isValid) {
+              if (result.data.isDisposisi) {
+                if (result.data.isDibaca) {
+                  $('#status').html(`<div class="badge badge-success">Telah di dibaca oleh pihak divisi</div>`);
+                } else {
+                  $('#status').html(`<div class="badge badge-success">Telah di disposisi</div>`);
+                }
+              } else {
+                $('#status').html(`<div class="badge badge-primary">Telah di validasi</div>`);              
+              }
+            } else {
+              $('#status').html(`<div class="badge badge-secondary">Belum di validasi</div>`);
+            }
+            $('#dari').text(result.data.asal_surat);
+            $('#id_surat').val(result.data.id);
+            $('#terima').text(result.data.tanggal_terima);
+            $('#tanggal').text(result.data.tanggal_surat);
+            $('#no').text(result.data.no_agenda);
+            $('#no_surat').text(result.data.nomor_surat);
+            $('#sifats').text(result.data.sifat);
+            $('#tipes').text(``);
+            if(result.data.tipe.indexOf(`1`) != -1)
+            {  
+            $('#tipes').append(`
+              <label class ="badge badge-primary">
+                Segera
+              </label>`);
+            }
+            if(result.data.tipe.indexOf(`2`) != -1)
+            {  
+            $('#tipes').append(`
+              <label class ="badge badge-primary">
+                Sangat Segera
+              </label>`);
+            }
+            if(result.data.tipe.indexOf(`3`) != -1)
+            {  
+            $('#tipes').append(`
+              <label class ="badge badge-primary">
+                Penting
+              </label>`);
+            }
+            $('#perihals').text(result.data.perihal);
+            $('#file_surats').attr('href',`/${result.data.file}`);
+            $('#tanggal_validasi').text(result.data.tanggal_validasi);
+            $('#tanggal_disposisi').text(result.data.tanggal_disposisi);
+            $('#tanggal_dibaca').text(result.data.tanggal_dibaca);
+            $('#lembarDisposisi').text(``);
+            $('#lembarDisposisi').append(`<but onClick="laporanDisposisi('${result.data.id}')" data-toggle="tooltip" data-placement="top" title="Cetak lembar disposisi" type="button" class="btn btn-sm btn-rounded btn-warning">
+                          <i class="ti-email"> Lembar Disposisi</i> 
+                        </but>`);
+          },
+          error:    function(result){
+            let errors = result.responseJSON;
+            Toast.fire(errors.status, '', 'info')
+          },
+        });
+    }
 </script>
 @stack('js')
 </body>

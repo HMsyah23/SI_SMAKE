@@ -33,11 +33,22 @@ Route::resource('roles',RoleController::class);
 Route::resource('divisis',DivisiController::class);
 Route::resource('suratMasuks',SuratMasukController::class);
 Route::resource('suratMasuks',SuratMasukController::class);
+Route::get('valid/suratMasuks',[SuratMasukController::class,'valid']);
+Route::get('disposisi/suratMasuks',[SuratMasukController::class,'dispos']);
+Route::get('distribusi/suratMasuks',[SuratMasukController::class,'distri']);
+Route::get('needValidation/suratMasuks',[SuratMasukController::class,'needValidation']);
 Route::get('suratMasuks/filter/{year}',[SuratMasukController::class,'filter']);
-Route::get('suratMasuks/divisi/{divisi}',[SuratMasukController::class,'divisi']);
+Route::get('suratMasuks/{divisi}/divisi',[SuratMasukController::class,'divisi']);
+Route::get('suratMasuks/{suratMasuk}/validasi',[SuratMasukController::class,'validasi']);
+Route::post('suratMasuks/{suratMasuk}/distribusi',[SuratMasukController::class,'distribusi']);
+Route::post('suratMasuks/{suratMasuk}/disposisi',[SuratMasukController::class,'disposisi']);
 Route::resource('suratKeluars',SuratKeluarController::class);
+Route::post('suratKeluars/{suratKeluar}/validasi',[SuratKeluarController::class,'validasi']);
 Route::get('suratKeluars/filter/{year}',[SuratKeluarController::class,'filter']);
+Route::get('suratKeluars/{divisi}/divisi',[SuratKeluarController::class,'divisi']);
 Route::get('beritas/filter/category',[BeritaController::class,'filter']);
+Route::get('needValidation/suratKeluars',[SuratKeluarController::class,'needValidation']);
+
 
 Route::resource('galeris',GaleriController::class);
 Route::resource('beritas',BeritaController::class);

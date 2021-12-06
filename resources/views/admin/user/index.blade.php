@@ -34,8 +34,7 @@
                       <th>#</th>
                       <th>Nama</th>
                       <th>Email</th>
-                      <th>Role</th>
-                      <th>Disposisi</th>
+                      <th>Divisi</th>
                       <th>Aksi</th>
                     </tr>
                   </thead>
@@ -125,8 +124,12 @@
           },
           { "data": "nama" },
           { "data": "email" },
-          { "data": "role.name" },
-          { "data": "divisi.kode" },
+          { 
+            "data": "id",
+            "render": function ( data, type, row, meta ) {
+              return `<strong> ${row.divisi.divisi} </strong>`;
+            }
+          },
           { 
             "data": "id",
             "render": function ( data, type, row, meta ) {
@@ -145,7 +148,7 @@
                           <i class="ti-trash"></i>
                         </button>
                       </div>`;
-            }
+              }
             }
           }
         ],

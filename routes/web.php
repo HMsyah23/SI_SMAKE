@@ -12,6 +12,7 @@ use App\Http\Controllers\BeritaController;
 use App\Http\Controllers\ProfilController;
 use App\Http\Controllers\InformasiController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\LaporanController;
 
 /*
 |--------------------------------------------------------------------------
@@ -84,8 +85,12 @@ Route::group(['prefix'=>'admin','middleware' => ['auth']], function () {
     Route::get('users/{user}/edit', [UserController::class, 'edit'])->name('user.edit');
     Route::get('surat/masuk/{suratMasuk}/edit', [SuratMasukController::class, 'edit'])->name('suratMasuk.edit');
     Route::get('surat/keluar/{suratKeluar}/edit', [SuratKeluarController::class, 'edit'])->name('suratKeluar.edit');
+    Route::get('suratMasuks/{suratMasuk}/terbaca', [SuratMasukController::class, 'terbaca'])->name('suratMasuk.terbaca');
     Route::get('galeri/{galeri}/edit', [GaleriController::class, 'edit'])->name('galeri.edit');
     Route::get('berita/{berita}/edit', [BeritaController::class, 'edit'])->name('berita.edit');
     Route::get('profil/{profil}/edit', [ProfilController::class, 'edit'])->name('profil.edit');
     Route::get('informasi/{informasi}/edit', [InformasiController::class, 'edit'])->name('informasi.edit');
+
+    Route::get('lembarDisposisi/{suratMasuk}', [LaporanController::class,'lembarDisposisi'])->name('laporan.disposisi');
+
 });

@@ -36,10 +36,10 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
+                    {{-- <tr>
                       <td class="pl-2">Disposisi</td>
                       <td><p class="mb-0"><span class="font-weight-bold divisi">{{$suratMasuk->divisi->divisi}}</span></p></td>
-                    </tr>
+                    </tr> --}}
                     <tr>
                       <td class="pl-2">Nomor Surat</td>
                       <td><p class="mb-0"><span class="font-weight-bold nomor_surat">{{$suratMasuk->nomor_surat}}</span></p></td>
@@ -211,7 +211,6 @@
         }
       });
 
-      selectBox('#divisi','Pilih Divisi','divisis','divisi','{{$suratMasuk->divisi->id}}');
     });
   </script>
 @endpush

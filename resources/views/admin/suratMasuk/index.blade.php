@@ -32,12 +32,11 @@
                   <thead>
                     <tr>
                       <th>#</th>
-                      <th>Penerima</th>
                       <th>Nomor Surat</th>
                       <th>Asal Surat</th>
                       <th>Tanggal Surat</th>
                       <th>Tanggal Terima</th>
-                      <th>File</th>
+                      <th>Status</th>
                       <th>Aksi</th>
                     </tr>
                   </thead>
@@ -63,24 +62,51 @@
             @csrf
             <div class="row">
               <div class="col-md-12 mb-3">
-                <label class="form-label">Nomor Surat</label>
-                <input required type="text" id="nomor" class="form-control form-control-sm" placeholder="Masukkan Nomor Surat"/>
-              </div>
-              <div class="col-md-12 mb-3">
-                <label class="form-label">Asal Surat</label>
+                <label class="form-label">Asal surat</label>
                 <input required type="text" id="asal" class="form-control form-control-sm" placeholder="Masukkan Asal Surat"/>
               </div>
               <div class="col-md-12 mb-3">
-                  <label>Tanggal Surat</label>
+                  <label>Tanggal surat</label>
                   <input required type="date" id="tanggal_surat" class="form-control form-control-sm" placeholder="Masukkan Tanggal Surat">
               </div>
               <div class="col-md-12 mb-3">
-                  <label>Tanggal Terima</label>
+                <label class="form-label">Nomor surat</label>
+                <input required type="text" id="nomor" class="form-control form-control-sm" placeholder="Masukkan Nomor Surat"/>
+              </div>
+              <div class="col-md-12 mb-3">
+                <label>Surat diterima pada tanggal</label>
                   <input required type="date" id="tanggal_terima" class="form-control form-control-sm" placeholder="Masukkan Tanggal Terima">
               </div>
               <div class="col-md-12 mb-3">
-                <label>Divisi*</label>
-                <select required  id="divisi" class="form-control form-control-sm"></select>
+                <label>No agenda</label>
+                <input required type="text" id="no_agenda" class="form-control form-control-sm" placeholder="Masukkan No Agenda">
+              </div>
+              <div class="col-md-12 mb-3">
+                <label>Sifat</label>
+                <input required type="text" id="sifat" class="form-control form-control-sm" placeholder="Masukkan Sifat Surat">
+              </div>
+              <div class="col-md-12 mb-3">
+                <label>Tipe Surat</label>
+                <div class="form-group">
+                  <div class="form-check">
+                    <label class="form-check-label">
+                      <input name="tipe" value="1" type="checkbox" class="form-check-input">
+                      Segera
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <label class="form-check-label">
+                      <input name="tipe" value="2" type="checkbox" class="form-check-input">
+                      Sangat Segera
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <label class="form-check-label">
+                      <input name="tipe" value="3" type="checkbox" class="form-check-input">
+                      Rahasia
+                    </label>
+                  </div>
+                </div>
               </div>
               <div class="col-md-12 mb-3">
                 <label class="form-label">Perihal</label>
@@ -114,6 +140,88 @@
       </div>
     </div>
   </div>
+
+  <div class="modal fade" id="modalSurat" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-body">
+          <button type="button" id="closeModal" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <h4 class="modal-title text-center mb-5"> Informasi <small class="text-primary"><i class="ti-email"></i> Surat Masuk</small></h4>
+            <table class="table table-bordered table-sm mb-3">
+              <tbody>
+                <tr>
+                  <th class="table-light" scope="col">Status</th>
+                  <td scope="col" id="status"></td>
+                </tr>
+                <tr>
+                  <th class="table-light" scope="col">Surat Dari</th>
+                  <td scope="col"><strong id="dari"></strong></td>
+                </tr>
+                <tr>
+                  <th class="table-light" scope="col">Diterima Tanggal</th>
+                  <td scope="col"><strong id="terima" ></strong></td>
+                </tr>
+                <tr>
+                  <th class="table-light" scope="col">Tanggal Surat</td>
+                  <td scope="col"><strong id="tanggal"></strong></td>
+                </tr>
+                <tr>
+                  <th class="table-light" scope="col">No Agenda</th>
+                  <td scope="col"><strong id="no"></strong></td>
+                </tr>
+                <tr>
+                  <th class="table-light" scope="col">No Surat<p></p></td>
+                  <td scope="col"><strong id="no_surat" ></strong></td>
+                </tr>
+                <tr>
+                  <th class="table-light" scope="col">Sifat</th>
+                  <td scope="col"><strong id="sifats" ></strong></td>
+                </tr>
+                <tr>
+                  <th class="table-light" scope="col">Tipe</th>
+                  <td scope="col" id="tipes">
+                  </td>
+                </tr>
+              <tr>
+                <th class="table-light" scope="col">Perihal</th>
+                  <td style="word-wrap: break-word;min-width: 10px; max-width: 10px; white-space:normal;" id="perihals" >
+                      
+                  </td>
+              </tr>
+              <tr>
+                <th class="table-light" scope="col">File Surat</th>
+                  <td>
+                    <a id="file_surats" href="" target="_blank" class="btn btn-rounded btn-sm btn-primary"><i class="ti-email"></i> Dokumen</a>
+                  </td>
+              </tr>
+              <tr>
+                <th class="table-light" scope="col">Divalidasi Pada Tanggal</th>
+                <td scope="col" id="tanggal_validasi">
+                </td>
+              </tr>
+              <tr>
+                <th class="table-light" scope="col">Didisposisi pada Tanggal</th>
+                <td scope="col" id="tanggal_disposisi">
+                </td>
+              </tr>
+              <tr>
+                <th class="table-light" scope="col">Telah Dibaca pada Tanggal</th>
+                <td scope="col" id="tanggal_dibaca">
+                </td>
+              </tr>
+              <tr>
+                <th class="table-light" scope="col">Lembar Disposisi</th>
+                <td scope="col" id="lembarDisposisi">
+                </td>
+              </tr>
+              </tbody>
+            </table>
+        </div>
+      </div>
+    </div>
+  </div>
 @endsection
 
 @push('js')
@@ -132,7 +240,6 @@
               return meta.row + 1;
             }
           },
-          { "data": "divisi.divisi" },
           { "data": "nomor_surat" },
           { "data": "asal_surat" },
           { "data": "tanggal_surat" },
@@ -140,17 +247,30 @@
           { 
             "data": "id",
             "render": function ( data, type, row, meta ) {
-                return `<div class="btn-group" role="group" aria-label="Basic example">
-                        <a href="/${row.file}" target="_blank" class="btn btn-info">
-                          <i class="ti-email"></i>
-                        </a>
-                      </div>`
+              if (row.isValid) {
+                if (row.isDisposisi) {
+                  if (row.isDistribusi) {
+                    if (row.isDibaca) {
+                      return `<div class="badge badge-success"><strong> <i class="ti-check"></i> Dibaca</strong></div>`
+                    }
+                    return `<div class="badge badge-outline-success"><strong> <i class="ti-check"></i> Terkirim</strong></div>`
+                  }
+                  return `<div class="badge badge-info"><strong> <i class="ti-check"></i> Disposisi</strong></div>`
+                }
+                return `<div class="badge badge-warning"><strong> <i class="ti-check"></i> Validasi</strong></div>`
+              } else {
+                return `<div class="badge badge-danger"><strong> <i class="ti-close"></i> Validasi</strong></div>`
+              }
             }
           },
           { 
             "data": "id",
             "render": function ( data, type, row, meta ) {
+              @if (Auth::user()->id === "0797f5f9-7312-4d6d-ac1a-803af987af32") 
                 return `<div class="btn-group" role="group" aria-label="Basic example">
+                        <button onClick="modalFunction('${data}')" type="button"  data-toggle="tooltip" data-placement="top" title="Detail surat" class="btn btn-info">
+                          <i class="ti-eye"></i>
+                        </button>
                         <a href="masuk/${data}/edit" class="btn btn-warning">
                           <i class="ti-pencil"></i>
                         </a>
@@ -158,6 +278,13 @@
                           <i class="ti-trash"></i>
                         </button>
                       </div>`
+              @else
+              return `<div class="btn-group" role="group" aria-label="Basic example">
+                        <button onClick="modalFunction('${data}')" type="button"  data-toggle="tooltip" data-placement="top" title="Detail surat" class="btn btn-info">
+                          <i class="ti-eye"></i>
+                        </button>
+                      </div>`
+              @endif
             }
           }
         ],
@@ -173,12 +300,22 @@
     $('#ajaxSubmit').on('submit', function(e){
       e.preventDefault();
         if($('#divisi').val() != null || $('#file_surat').prop('files')[0] != null){
+          var tipe = [];
+          var checkboxes = document.querySelectorAll('input[name=tipe]:checked');
+
+          for (var i = 0; i < checkboxes.length; i++) {
+            tipe.push(checkboxes[i].value)
+          }
+
           let data = new FormData();
           data.append('divisi', $('#divisi').val());
           data.append('nomor'  , $('#nomor').val());
           data.append('asal' , $('#asal').val());
           data.append('tanggal_surat' , $('#tanggal_surat').val());
           data.append('tanggal_terima' , $('#tanggal_terima').val());
+          data.append('no_agenda' , $('#no_agenda').val());
+          data.append('sifat' , $('#sifat').val());
+          data.append('tipe' , tipe);
           data.append('perihal' , $('#perihal').val());
           data.append('file', $('#file_surat').prop('files')[0]);
           $.ajax({
@@ -227,7 +364,7 @@
             icon: 'error',
           })
         }
-      });
+    });
 
     selectBox('#divisi','Pilih Divisi','divisis','divisi');
 
@@ -257,5 +394,7 @@
             }
         })
     }
+
+    
   </script>
 @endpush

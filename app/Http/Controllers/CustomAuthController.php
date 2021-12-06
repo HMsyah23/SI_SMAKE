@@ -70,8 +70,12 @@ class CustomAuthController extends Controller
     public function dashboard()
     {
         if(Auth::check()){
-            if (Auth::user()->role->name == 'Admin') {
+            if (Auth::user()->role->id == '71e61563-591c-4800-8485-ae51f509bdf9') {
                 return view('admin.index');
+            } else if (Auth::user()->role->id == '219dd050-96b9-47bb-9727-b6cf6a84fac8') {
+                return view('admin.ketuaUPTD');
+            } else if (Auth::user()->role->id == '73e819e5-0a2f-4493-9b4f-61bb02c5c03c') {
+                return view('admin.ketuaTU');
             } else {
                 return view('admin.user');
             }

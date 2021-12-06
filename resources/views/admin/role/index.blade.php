@@ -125,7 +125,7 @@
           { 
             "data": "id",
             "render": function ( data, type, row, meta ) {
-              if(row.id == '6539054c-6aa5-48ec-bc3b-a235f135c923' || row.id == 'f7e9d614-e732-4669-9a8f-4c719f29a6af'){
+              if(row.id == '6539054c-6aa5-48ec-bc3b-a235f135c923' || row.id == 'f7e9d614-e732-4669-9a8f-4c719f29a6af' || row.id == '71e61563-591c-4800-8485-ae51f509bdf9'){
                 return ``;
               } else{
                 return `<div class="btn-group" role="group" aria-label="Basic example">

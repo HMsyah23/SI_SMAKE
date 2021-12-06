@@ -14,10 +14,23 @@ class SuratKeluar extends Model
 
     protected $fillable = [
         'nomor_surat',
+        'divisi_id',
         'tujuan_surat',
-        'tanggal_keluar',
         'perihal',
-        'file'
+        'file',
+        'isValid',
+        'lampiran',
+        'tanggal_validasi',
     ];
+
+    protected $casts = [
+        'lampiran' => 'array',
+        'tanggal_validasi'  => 'date:d / m /Y',
+    ];
+
+    public function divisi()
+    {
+        return $this->belongsTo(Divisi::class);
+    }
 
 }
