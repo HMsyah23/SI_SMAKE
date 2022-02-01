@@ -45,13 +45,19 @@
                 <label class="form-label">Berita*</label>
       					<div id="editor" style="min-height: 160px;"></div>
               </div>
-              <div class="col-md-12 mt-5 mb-3">
+              <div class="col-md-12 mt-5">
                   <div class="form-group">
                     <label>Kategori*</label>
-                  <select required id="category" class="form-control form-control-lg" style="width: 100%" multiple="multiple"></select>
-                  <small for="">*Gunakan " , " untuk memisahkan kategori</small>
+                  <select required id="category" class="form-control form-control-lg" style="width: 100%"></select>
                   </div>
               </div>
+              <div class="col-md-12 mb-3">
+                <div class="form-group">
+                  <label>Tags*</label>
+                <select required id="tags" class="form-control form-control-lg" style="width: 100%" multiple="multiple"></select>
+                <small for="">*Gunakan " , " untuk memisahkan tags</small>
+                </div>
+            </div>
               <div class="col-md-12 mb-3">
                 <div class="form-group">
                   <label>Foto Thumbnail Berita</label>
@@ -104,11 +110,17 @@
 <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
   <script>
+    $("#tags").select2({
+      tags: true,
+      placeholder: "Pilih Tags",
+      theme: "classic",
+      tokenSeparators: [',']
+    })
+
     $("#category").select2({
       tags: true,
       placeholder: "Pilih Kategori",
-      theme: "classic",
-      tokenSeparators: [',']
+      theme: "classic"
     })
     let quill = new Quill('#editor', {
 			theme: 'snow',
@@ -134,23 +146,33 @@
       let dropdown = $("#category");
         dropdown.empty();
 
-        const url = `${BASE_URL}/api/beritas/filter/category`;
-        // Populate dropdown with list of provinces
+        const url = `${BASE_URL}/api/categories`;
         $.getJSON(url, function (result) {
             $.each(result.data, function (key, entry) {
-              dropdown.append($('<option></option>').attr('value', entry).text(eval(`entry`)));
+              dropdown.append($('<option></option>').attr('value', entry.id).text(eval(`entry.name`)));
+            });
+        });
+
+        let dropTag = $("#tags");
+        dropTag.empty();
+
+        let urlTag = `${BASE_URL}/api/tags`;
+        $.getJSON(urlTag, function (result) {
+            $.each(result.data, function (key, entry) {
+              dropTag.append($('<option></option>').attr('value', entry.id).text(eval(`entry.name`)));
             });
         });
     });
   
     $('#ajaxSubmit').on('submit', function(e){
       e.preventDefault();
-        if(($('#category').val() != null)){
+        if(($('#category').val() != null) && ($('#tags').val() != null)){
           let data = new FormData();
           data.append('title'  , $('#title').val());
           data.append('body' , quill.editor.scroll.domNode.innerHTML);
           data.append('author' , $('#author').val());
           data.append('category', $('#category').val());
+          data.append('tags', $('#tags').val());
           data.append('foto', $('#img').prop('files')[0]);
           $.ajax({
             url: `${BASE_URL}/api/beritas`,
@@ -178,6 +200,7 @@
               }, 1000 );
               $('#title').val("");
               $('#category').val("");
+              $('#tags').val("");
               $('#editor').val("");
               $('#author').val("");
               $('#foto').val("");

@@ -8,13 +8,26 @@ use App\Traits\Uuid;
 
 class Galeri extends Model
 {
-    use HasFactory, Uuid;
-
-    public $incrementing = false;
+    use HasFactory;
 
     protected $fillable = [
         'nama',
+        'tipe',
         'deskripsi',
-        'foto',
     ];
+
+    public function files()
+    {
+        return $this->hasMany(FileGaleri::class);
+    }
+
+    public function tags()
+    {
+        return $this->belongsToMany(
+            Tag::class,
+            'galeri_tag',
+            'galeri_id',
+            'tag_id'
+        );
+    }
 }

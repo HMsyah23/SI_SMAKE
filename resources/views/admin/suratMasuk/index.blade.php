@@ -24,7 +24,14 @@
     <div class="col-md-12 grid-margin stretch-card">
       <div class="card">
         <div class="card-body">
-          <p class="card-title">Daftar Surat Masuk</p>
+          <div class="d-flex justify-content-between mb-1">
+            <p class="card-title">Daftar Surat Masuk</p>
+          <button class="btn btn-sm btn-secondary" id="refreshSurat" type="button">
+            <div class="rotate">
+               <i class="ti-reload"></i>
+            </div>
+          </button>
+          </div>
           <div class="row">
             <div class="col-12">
               <div class="table-responsive">
@@ -395,6 +402,13 @@
         })
     }
 
-    
+    $("#refreshSurat").click(function(){
+      $(".rotate").toggleClass("down");
+      Toast.fire({
+            title: "Data Surat Masuk Disegarkan",
+            icon: 'info',
+          })
+      $("#surat").DataTable().ajax.reload();
+    });
   </script>
 @endpush

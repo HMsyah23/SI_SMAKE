@@ -77,8 +77,15 @@
         <div class="card-body">
          <div class="d-flex justify-content-between mb-1">
           <p class="card-title"><i class="ti-email"></i> Surat Masuk</p>
-          <a href="{{ route('surat.masuk') }}" class="btn btn-sm btn-primary"> <i class="ti-plus"></i> Tambah Data Surat Masuk</a>
-         </div>
+          <div class="btn-group" role="group" aria-label="Basic example">
+            <a href="{{ route('surat.masuk') }}" class="btn btn-sm btn-primary"> <i class="ti-plus"></i> Tambah Data Surat Masuk</a>
+             <button class="btn btn-sm btn-secondary" id="refreshSuratMasuk" type="button">
+               <div class="rotate">
+                  <i class="ti-reload"></i>
+               </div>
+             </button>
+          </div>
+        </div>
          <div class="row">
           <div class="col-12">
             <div class="table-responsive">
@@ -102,7 +109,17 @@
     <div class="col-md-6 grid-margin">
       <div class="card">
         <div class="card-body">
-          <p class="card-title"><i class="ti-email"></i> Surat Keluar</p>
+          <div class="d-flex justify-content-between mb-1">
+            <p class="card-title">Surat Keluar</p>
+            <div class="btn-group" role="group" aria-label="Basic example">
+              <a href="{{ route('surat.keluar') }}" class="btn btn-sm btn-primary"> <i class="ti-plus"></i> Tambah Data Surat Keluar</a>
+              <button class="btn btn-sm btn-secondary" id="refreshSuratKeluar" type="button">
+                <div class="rotate">
+                   <i class="ti-reload"></i>
+                </div>
+              </button>
+            </div>
+          </div>
           <div class="row">
             <div class="col-12">
               <div class="table-responsive">
@@ -245,7 +262,13 @@
                 </tr>
                 <tr>
                   <th class="table-light" scope="col">Lampiran</th>
-                  <td scope="col"><strong id="lampir" ></strong></td>
+                  <td scope="col">
+                    <strong id="lampir" class="row pr-5"></strong>
+                  </td>
+                </tr>
+                <tr>
+                  <th class="table-light" scope="col">Tanggal Dibuat</td>
+                    <td scope="col"><strong id="tanggalDibuat"></strong></td>
                 </tr>
               </tbody>
             </table>
@@ -272,11 +295,6 @@
               </div>
             </div>
             <div class="d-flex justify-content-end">
-              <button disabled id="loader" class="btn btn-primary mr-2">
-                <div class="spinner-border" role="status">
-                  <span class="sr-only">Loading...</span>
-                </div>
-              </button>
               <button type="submit" class="btn btn-primary perbarui"><i class="ti-save"></i> Simpan</button>
             </div>
           </form>
@@ -377,7 +395,7 @@
       });
     });
 
-    $('#suratKeluar').DataTable( {
+      $('#suratKeluar').DataTable( {
         "ajax": `${BASE_URL}/api/needValidation/suratKeluars`,
         "columns" : [
           { 
@@ -433,24 +451,36 @@
         method: 'get',
         success: function(result){
           $('#modalSuratKeluar').modal('show');
-          console.log(result);
           $('#loader').hide();
           $('#divis').text(result.data.divisi.divisi);
           $('#tujuan').text(result.data.tujuan_surat);
           $('#peri').text(result.data.perihal);
-          $('#stat').text(``);
           $('#lampir').text(``);
+          $('#no_kel').text(``);
+          $('#tanggalDibuat').text(result.data.created_at);
+          let validasi = '';
+          if (result.data.isValid) {
+            validasi = "Telah Divalidasi |";
+          }
+          $('#stat').text(`${validasi} ${result.data.tanggal_validasi}`);
           if (result.data.nomor_surat == `null`) {
             $('#no_kel').append(`<div class="badge badge-outline-danger">Belum Diberikan</div>`);
-            $('#stat').append(`<div class="badge badge-danger">Belum Divalidasi</div>`);
           } else {
             $('#no_kel').text(result.data.nomor_surat);
-            $('#stat').append(`<div class="badge badge-success">Telah Divalidasi</div>`);
           }
           $('#file_surat_keluar').attr('href',`${BASE_URL}/${result.data.file}`);
-          $.each(JSON.parse(result.data.lampiran), function(k, v) {
-            $('#lampir').append(`<a href="/lampiran/surat/keluar/${v}" target="_blank" class="btn btn-sm btn-outline-primary ml-1">Lampiran ${k+1}</a>`);
-          });
+          const arr = result.data.lampirans;
+          if (arr.length > 0) {
+              arr.forEach(function(v,k) {
+              $('#lampir').append(`
+                <div class="col-sm-4 col-6 mb-1">
+                  <a href="/${v.lampiran}" target="_blank" class="btn btn-sm btn-outline-primary ml-1">Lampiran ${k+1}</a>
+                </div>
+              `);
+            });
+          } else {
+            $('#lampir').append(`<div class="col pl-3"> Tidak ada Lampiran </div>`);
+          }
         },
         error:    function(result){
           let errors = result.responseJSON;
@@ -479,17 +509,15 @@
         data: data,
         processData: false,
         contentType: false,
-        beforeSend: function () {
-          $('#loader').show();
-          $('.perbarui').prop('disabled', true);
+        beforeSend: function() {
+          $('.perbarui').html('<div class="spinner-border spinner-border-sm"></div> Simpan')
+            .prop('disabled', true);
         },
         complete: function() {
-          $('#loader').hide();
-          $('.perbarui').prop('disabled', false);
+          $('.perbarui').html('<i class="ti-save"></i></div> Simpan').prop('disabled', false);
         },
         success: function(result){
           $("#suratKeluar").DataTable().ajax.reload();
-          console.log(result.status);
           Toast.fire({
             title: result.status,
             icon: 'success',
@@ -507,6 +535,24 @@
           })
         },
       });
+    });
+
+    $("#refreshSuratKeluar").click(function(){
+      $(".rotate").toggleClass("down");
+      Toast.fire({
+            title: "Data Surat Keluar Disegarkan",
+            icon: 'info',
+          })
+      $("#suratKeluar").DataTable().ajax.reload();
+    });
+
+    $("#refreshSuratMasuk").click(function(){
+      $(".rotate").toggleClass("down");
+      Toast.fire({
+            title: "Data Surat Masuk Disegarkan",
+            icon: 'info',
+          })
+      $("#suratMasuk").DataTable().ajax.reload();
     });
   </script>
 @endpush

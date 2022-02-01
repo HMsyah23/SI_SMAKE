@@ -40,8 +40,10 @@
 <!-- Custom js for this page-->
 <script src="{{ asset('assets/admin/js/dashboard.js')}}"></script>
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://unpkg.com/filepond/dist/filepond.js"></script>
 <!-- End custom js for this page-->
 <script>
+  FilePond.parse(document.body);
     $.ajaxSetup({
       headers: {
         'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')

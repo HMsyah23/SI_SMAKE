@@ -38,6 +38,12 @@
           <span class="menu-title">Divisi</span>
         </a>
       </li>
+      <li class="nav-item {{ (Route::current()->getName() == 'menu') ? 'active' : '' }} ">
+        <a class="nav-link" href="{{ route('menu') }}">
+          <i class="ti-menu-alt menu-icon"></i>
+          <span class="menu-title">Menu</span>
+        </a>
+      </li>
     </ul>
   </nav>
 @elseif (Auth::user()->role->id == "73e819e5-0a2f-4493-9b4f-61bb02c5c03c" || Auth::user()->role->id == "219dd050-96b9-47bb-9727-b6cf6a84fac8")

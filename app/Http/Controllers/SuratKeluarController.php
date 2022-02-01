@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Auth;
 use App\Models\SuratKeluar;
+use App\Models\LampiranSuratKeluar;
 use App\Models\Divisi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File; 
@@ -23,17 +24,15 @@ class SuratKeluarController extends Controller
 
     public function store(Request $request)
     {
-        if($request->hasfile('lampiran')){
-            foreach ($request->file('lampiran') as $image) {
-                $name=$image->getClientOriginalName();
-                $destinationPath = public_path('lampiran/surat/keluar/');
-                $image->move($destinationPath, $name);
-                File::exists($destinationPath) or File::makeDirectory($destinationPath, 0777, true, true);
-                $data[] = $name;
-            }
+        if ($request['tanggal_validasi']) {
+            $tanggal =  now();    
         } else {
-            $data[] = NULL;
+            $tanggal =  null;    
         }
+            
+        $request->validate([
+            'file' => 'required|mimes:docx,pdf,doc|max:2048'
+        ]);
 
         if($request->file('file') == null){
             $file = null;
@@ -43,23 +42,36 @@ class SuratKeluarController extends Controller
             $file = $filePath;
         }
 
-        SuratKeluar::create([
+        $surat = SuratKeluar::create([
             'nomor_surat'     => $request['nomor_surat'],
             'tujuan_surat'     => $request['tujuan_surat'],
             'divisi_id'  => $request['divisi_id'],
             'perihal'  => $request['perihal'],
             'file'  => $file,
             'isValid'  => $request['isValid'],
-            'lampiran' => json_encode($data),
-            'tanggal_validasi' => $request['tanggal_validasi']
+            'tanggal_validasi' => $tanggal
         ]);
-        return response()->json(['status' => 'Surat Keluar Berhasil Ditambahkan'], 200);
-    
+        
+        if ($request->lampiran[0] !== 'undefined') {
+            $sum = count($request->lampiran);
+            for ($i=0; $i < $sum ; $i++) { 
+                $image = $request->lampiran[$i];
+                $name= md5(time()).$i.'.'.$image->getClientOriginalExtension();
+                $destinationPath = public_path('lampiran/surat/keluar/');
+                $image->move($destinationPath, $name);
+                File::exists($destinationPath) or File::makeDirectory($destinationPath, 0777, true, true);
+                LampiranSuratKeluar::create([
+                    'surat_keluar_id' => $surat->id,
+                    'lampiran'       => 'lampiran/surat/keluar/'.$name,
+                ]);
+            }
+        }
+        return response()->json(['status' => 'Data Surat Keluar Berhasil Diunggah'], 200);    
     }
 
     public function show($suratKeluar)
     {
-        $suratKeluar = SuratKeluar::where('id',$suratKeluar)->with('divisi')->first();
+        $suratKeluar = SuratKeluar::where('id',$suratKeluar)->with(['divisi','lampirans'])->first();
         return response()->json(['data' => $suratKeluar], 200);
     }
 
@@ -70,24 +82,9 @@ class SuratKeluarController extends Controller
 
     public function update(Request $request, SuratKeluar $suratKeluar)
     {
-        if($request->file('file') == null){
-            $file =  $suratKeluar->file;
-        } else {
-            $request->validate([
-                'file' => 'mimes:pdf|max:2048'
-            ]);
-            File::delete($suratKeluar->file);
-            $fileName = md5(time()).'.'.$request->file->getClientOriginalExtension();
-            $filePath = $request->file('file')->storeAs('surat/keluar', $fileName, 'public');
-            $file = $filePath;
-        }
-
         $suratKeluar->update([
-            'nomor_surat'    => $request['nomor'],
-            'tujuan_surat'   => $request['tujuan'],
-            'tanggal_keluar' => $request['tanggal_keluar'],
+            'tujuan_surat'   => $request['tujuan_surat'],
             'perihal'        => $request['perihal'],
-            'file'           => $file 
         ]);
 
         return response()->json(['data' => $suratKeluar,'status' => 'Data Berhasil Diperbarui'], 200);
@@ -95,9 +92,15 @@ class SuratKeluarController extends Controller
 
     public function destroy(SuratKeluar $suratKeluar)
     {
+        if ($suratKeluar->lampirans->count() > 0) {
+            foreach ($suratKeluar->lampirans as $lampiran) {
+                File::delete($lampiran->lampiran);
+                $lampiran->delete();
+            }
+        }
         File::delete($suratKeluar->file);
         $suratKeluar->delete();
-        return response()->json(['data' => ['status' => 'Data Surat Keluar Berhasil Dihapus']],200);
+        return response()->json(['data' => ['status' => "Surat Keluar Berhasil Dihapus"]],200);
     }
 
     public function filter($year){
@@ -142,5 +145,39 @@ class SuratKeluarController extends Controller
     {
         $data = SuratKeluar::where('isValid',0)->get();
         return response()->json(['data' => $data], 200);
+    }
+
+    public function fileSuratKeluar(SuratKeluar $suratKeluar,Request $request)
+    {
+
+        $request->validate([
+            'file' => 'required|mimes:docx,pdf,doc|max:2048'
+        ]);
+
+        if($request->file('file') == null){
+            $file = null;
+        } else {
+            $fileName = md5(time()).'.'.$request->file->getClientOriginalExtension();
+            $filePath = $request->file('file')->storeAs('surat/keluar', $fileName, 'public');
+            $file = $filePath;
+        }
+
+        File::delete($suratKeluar->file);
+        $suratKeluar->update([
+            'file'  => $file,
+        ]);
+        return response()->json(['data' => $suratKeluar,'status' => 'File Surat Keluar Berhasil Diperbarui'], 200);    
+    }
+
+    public function perbarui(Request $request, SuratKeluar $suratKeluar)
+    {
+        $suratKeluar->update([
+            'nomor_surat'    => $request['nomor_surat'],
+            'tujuan_surat'   => $request['tujuan_surat'],
+            'divisi_id'      => $request['divisi_id'],
+            'perihal'        => $request['perihal'],
+        ]);
+        $suratKeluar = SuratKeluar::where('id',$suratKeluar->id)->with('divisi')->first();
+        return response()->json(['data' => $suratKeluar,'status' => 'Data Berhasil Diperbarui'], 200);
     }
 }

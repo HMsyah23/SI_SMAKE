@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\Uuid;
-
+use Carbon\Carbon;
 class SuratMasuk extends Model
 {
     use HasFactory,Uuid;
@@ -20,7 +20,6 @@ class SuratMasuk extends Model
         'asal_surat',
         'tanggal_surat',
         'tanggal_disposisi',
-        'tanggal_dibaca',
         'tanggal_validasi',
         'tanggal_terima',
         'no_agenda',
@@ -34,7 +33,6 @@ class SuratMasuk extends Model
         'isValid',
         'isDisposisi',
         'isDistribusi',
-        'isDibaca',
     ];
 
     protected $casts = [
@@ -42,21 +40,53 @@ class SuratMasuk extends Model
         'catatan' => 'array',
         'divisi' => 'array',
         'noted' => 'array',
-        'tanggal_surat'  => 'date:d / m /Y',
-        'tanggal_terima'  => 'date:d / m /Y',
-        'tanggal_validasi'  => 'date:d / m /Y',
-        'tanggal_disposisi'  => 'date:d / m /Y',
-        'tanggal_dibaca'  => 'date:d / m /Y',
     ];
 
-    // public function getDivisiAttribute($value)
-    // {
-    //     $data = explode(',', substr($value,1,-1));
-    //     foreach ($data as $key => $value) {
-    //         $data[$key] = Divisi::find($value)->divisi;
-    //     }
-    //     return $data;
-    // }
+    public function divisis()
+    {
+        return $this->belongsToMany(
+            Divisi::class,
+            'divisi_surat_masuks',
+            'surat_masuk_id',
+            'divisi_id'
+        );
+    }
+
+    public function getTanggalValidasiAttribute($date)
+    {
+        if ($date) {
+            return Carbon::parse($date)->isoFormat('dddd, D MMMM Y (H:mm:ss)');
+        } else {
+            return 'Belum divalidasi';
+        }
+    }
+
+    public function getTanggalSuratAttribute($date)
+    {
+        if ($date) {
+            return Carbon::parse($date)->isoFormat('dddd, D MMMM Y');
+        } else {
+            return 'Belum ditemukan';
+        }
+    }
+
+    public function getTanggalTerimaAttribute($date)
+    {
+        if ($date) {
+            return Carbon::parse($date)->isoFormat('dddd, D MMMM Y (H:mm:ss)');
+        } else {
+            return 'Belum diterima';
+        }
+    }
+
+    public function getTanggalDisposisiAttribute($date)
+    {
+        if ($date) {
+            return Carbon::parse($date)->isoFormat('dddd, D MMMM Y (H:mm:ss)');
+        } else {
+            return 'Belum divalidasi';
+        }
+    }
 
     public function getTipeAttribute($value)
     {
@@ -70,9 +100,14 @@ class SuratMasuk extends Model
         return $data;
     }
 
-    public function divisi()
+    public function getCreatedAtAttribute($date)
     {
-        return $this->belongsTo(Divisi::class);
+        return Carbon::parse($date)->addHours(8)->isoFormat('dddd, D MMMM Y (H:mm:ss)');
+    }
+
+    public function getUpdatedAtAttribute($date)
+    {
+        return Carbon::parse($date)->addHours(8)->isoFormat('dddd, D MMMM Y (H:mm:ss)');
     }
 
     public function scopeWhereLike($query, $column, $value)

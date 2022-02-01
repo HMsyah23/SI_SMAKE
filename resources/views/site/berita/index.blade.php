@@ -1,104 +1,85 @@
 @extends('site.layouts.app')
 
-@section('content')
-	<section class="page-title bg-1">
-		<div class="overlay"></div>
-		<div class="container">
-			<div class="row">
-			<div class="col-md-12">
-				<div class="block text-center">
-				<h1 class="text-capitalize mb-5 text-lg">Berita</h1>
+@push('css')
+    <style>
+        .department-block {
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+            transition: 0.3s;
+            border-radius: 5px;
+        }
 
-				<ul class="list-inline breadcumb-nav">
-					<li class="list-inline-item"><a href="{{ route('home') }}" class="text-white">Beranda</a></li>
-					<li class="list-inline-item"><span class="text-white">/</span></li>
-					<li class="list-inline-item"><a href="{{ route('berita') }}" class="text-white-50">Berita</a></li>
-				</ul>
-				</div>
-			</div>
-			</div>
-		</div>
-	</section>
-	<section class="section service-2">
-		<div class="container">
-			<div class="row justify-content-center">
-				<div class="col-lg-7 text-center">
-					<div class="section-title">
-						<h2>Award winning patient care</h2>
-						<div class="divider mx-auto my-4"></div>
-						<p>Lets know moreel necessitatibus dolor asperiores illum possimus sint voluptates incidunt molestias nostrum laudantium. Maiores porro cumque quaerat.</p>
-					</div>
-				</div>
-			</div>
-	
-			<div class="row">
-				<div class="col-lg-4 col-md-6 ">
-					<div class="department-block mb-5">
-						<img src="images/service/service-1.jpg" alt="" class="img-fluid w-100">
-						<div class="content">
-							<h4 class="mt-4 mb-2 title-color">Opthomology</h4>
-							<p class="mb-4">Saepe nulla praesentium eaque omnis perferendis a doloremque.</p>
-							<a href="department-single.html" class="read-more">Learn More  <i class="icofont-simple-right ml-2"></i></a>
-						</div>
-					</div>
-				</div>
-	
-				<div class="col-lg-4 col-md-6">
-					<div class="department-block mb-5">
-						<img src="images/service/service-2.jpg" alt="" class="img-fluid w-100">
-						<div class="content">
-							<h4 class="mt-4 mb-2  title-color">Cardiology</h4>
-							<p class="mb-4">Saepe nulla praesentium eaque omnis perferendis a doloremque.</p>
-							<a href="department-single.html" class="read-more">Learn More <i class="icofont-simple-right ml-2"></i></a>
-						</div>
-					</div>
-				</div>
-				
-				<div class="col-lg-4 col-md-6">
-					<div class="department-block mb-5">
-						<img src="images/service/service-3.jpg" alt="" class="img-fluid w-100">
-						<div class="content">
-							<h4 class="mt-4 mb-2 title-color">Dental Care</h4>
-							<p class="mb-4">Saepe nulla praesentium eaque omnis perferendis a doloremque.</p>
-							<a href="department-single.html" class="read-more">Learn More <i class="icofont-simple-right ml-2"></i></a>
-						</div>
-					</div>
-				</div>
-	
-	
-				<div class="col-lg-4 col-md-6 ">
-					<div class="department-block  mb-5 mb-lg-0">
-						<img src="images/service/service-4.jpg" alt="" class="img-fluid w-100">
-						<div class="content">
-							<h4 class="mt-4 mb-2 title-color">Child Care</h4>
-							<p class="mb-4">Saepe nulla praesentium eaque omnis perferendis a doloremque.</p>
-							<a href="department-single.html" class="read-more">Learn More <i class="icofont-simple-right ml-2"></i></a>
-						</div>
-					</div>
-				</div>
-	
-				<div class="col-lg-4 col-md-6">
-					<div class="department-block mb-5 mb-lg-0">
-						<img src="images/service/service-6.jpg" alt="" class="img-fluid w-100">
-						<div class="content">
-							<h4 class="mt-4 mb-2 title-color">Pulmology</h4>
-							<p class="mb-4">Saepe nulla praesentium eaque omnis perferendis a doloremque.</p>
-							<a href="department-single.html" class="read-more">Learn More <i class="icofont-simple-right ml-2"></i></a>
-						</div>
-					</div>
-				</div>
-				
-				<div class="col-lg-4 col-md-6">
-					<div class="department-block mb-5 mb-lg-0">
-						<img src="images/service/service-8.jpg" alt="" class="img-fluid w-100">
-						<div class="content">
-							<h4 class="mt-4 mb-2 title-color">Gynecology</h4>
-							<p class="mb-4">Saepe nulla praesentium eaque omnis perferendis a doloremque.</p>
-							<a href="department-single.html" class="read-more">Learn More <i class="icofont-simple-right ml-2"></i></a>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</section>
+        .department-block:hover {
+            box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        img {
+            border-radius: 5px 5px 0 0;
+        }
+
+
+        .title-color {
+            transition: 0.3s;
+        }
+
+        .title-color:hover {
+            color: #62de15;
+        }
+
+    </style>
+@endpush
+
+@section('content')
+    <section class="page-title bg-1">
+        <div class="overlay"></div>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="block text-center">
+                        <h1 class="text-capitalize mb-5 text-lg">Berita</h1>
+
+                        <ul class="list-inline breadcumb-nav">
+                            <li class="list-inline-item"><a href="{{ route('home') }}" class="text-white">Beranda</a>
+                            </li>
+                            <li class="list-inline-item"><span class="text-white">/</span></li>
+                            <li class="list-inline-item"><a href="{{ url('berita/main') }}"
+                                    class="text-white-50">Berita</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="section service-2">
+        <div class="container">
+
+            <div class="row">
+                @forelse ($beritas as $berita)
+                    <div class="col-lg-4 col-md-6 d-flex align-items-stretch">
+                        <div class="department-block mb-5">
+                            <div class="card-img-wrap">
+                                <img src="{{ asset($berita->foto) }}" alt="" class="img-fluid w-100">
+                            </div>
+                                <div class="blog-item-meta pl-4 mb-2 mt-2">
+                                <span class="text-black text-capitalize mr-3"><i class="icofont-calendar mr-1"></i>
+                                    {{ \Carbon\Carbon::parse($berita->created_at)->format('d F Y') }}</span>
+                            </div>
+                            <div class="content pt-2 pl-4 pb-3 pr-4">
+                                <a href="/berita/{{ $berita->slug }}">
+                                    <h4 class="mt-1 mb-1 title-color">{{ $berita->title }}</h4>
+                                </a>
+                                <p class="mb-4">{!! \Illuminate\Support\Str::words($berita->body, 10) !!}</p>
+                            </div>
+                        </div>
+                    </div>
+                @empty
+                    <div class="col-lg-12 text-center">
+                        <h2>Tidak Ada Berita</h2>
+                        <div class="divider mx-auto my-4"></div>
+                    </div>
+                @endforelse
+            </div>
+            {{ $beritas->links('vendor.pagination.custom') }}
+        </div>
+    </section>
 @endsection

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Hash;
+use Crypt;
 use Session;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -15,7 +16,18 @@ class CustomAuthController extends Controller
     {
         return view('auth.login');
     }  
-      
+    
+    public function portal()
+    {
+        $user = Crypt::decrypt($_GET['id']);
+        if (Auth::loginUsingId($user,true)) {
+            Session::put('navbarState', True);
+            return redirect()->intended('admin/dashboard')
+                        ->withSuccess('Signed in');
+        }
+
+        return redirect("login")->with(['error' => 'Email Atau Password Tidak Cocok']);
+    }
 
     public function customLogin(Request $request)
     {

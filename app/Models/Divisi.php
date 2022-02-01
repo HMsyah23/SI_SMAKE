@@ -19,6 +19,16 @@ class Divisi extends Model
 
     public function suratMasuks()
     {
-        return $this->hasMany(SuratMasuk::class);
+        return $this->belongsToMany(
+            SuratMasuk::class,
+            'divisi_surat_masuks',
+            'divisi_id',
+            'surat_masuk_id'
+        );
+    }
+
+    public function pegawais()
+    {
+        return $this->hasMany(Pegawai::class);
     }
 }

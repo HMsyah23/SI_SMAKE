@@ -34,7 +34,6 @@
                       <th>#</th>
                       <th>Judul</th>
                       <th>Penulis</th>
-                      <th>Kategori</th>
                       <th>Aksi</th>
                     </tr>
                   </thead>
@@ -67,16 +66,6 @@
           },
           { "data": "title" },
           { "data": "author" },
-          { 
-            "data": "category",
-            "render": function (data, type, row) {
-              var tags = "";
-              for (var i = 0; i < data.length; i++) {
-                tags = tags + "<div class='badge badge-primary'>" + data[i] + "</div> ";
-              }
-              return tags;
-            }
-          },
           { 
             "data": "id",
             "render": function ( data, type, row, meta ) {

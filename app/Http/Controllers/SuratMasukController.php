@@ -7,6 +7,7 @@ use Image;
 use Illuminate\Support\Arr;
 use App\Models\SuratMasuk;
 use App\Models\Divisi;
+use App\Models\DivisiSuratMasuk;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File; 
 
@@ -14,7 +15,7 @@ class SuratMasukController extends Controller
 {
     public function index()
     {
-        $data = SuratMasuk::with(['divisi'])->get();
+        $data = SuratMasuk::get();
         return response()->json(['data' => $data], 200);
     }
 
@@ -119,8 +120,10 @@ class SuratMasukController extends Controller
     }
 
     public function divisi(Divisi $divisi){
-        $data = SuratMasuk::whereLike('divisi',$divisi->id)->where('isDistribusi',1)->get();
-        return response()->json(['data' => $data], 200);
+        $data = Divisi::whereHas('suratMasuks', function ($query) use($divisi) {
+            $query->where('divisi_id', $divisi->id);
+        })->with('suratMasuks')->first(); 
+        return response()->json(['data' => $data['suratMasuks']], 200);
     }
 
     public function validasi(SuratMasuk $suratMasuk)
@@ -135,6 +138,8 @@ class SuratMasukController extends Controller
 
     public function disposisi(SuratMasuk $suratMasuk,Request $request)
     {   
+        $divisi = explode(',', $request->divisi);
+
         $image = $request->tanda_tangan;  // your base64 encoded
         $image = str_replace('data:image/png;base64,', '', $image);
         $image = str_replace(' ', '+', $image);
@@ -146,12 +151,14 @@ class SuratMasukController extends Controller
         \File::put(public_path(). '/tanda_tangan/' . $imageName, $resized_image);
         $suratMasuk->update([
             'isDisposisi'  => 1,
-            'divisi'       => $request->divisi,
             'noted'        => $request->noted,
             'catatan'      => $request->catatan,
             'tanda_tangan' => '/tanda_tangan/' .$imageName,
             'tanggal_disposisi' => now()
         ]);
+
+        $suratMasuk->divisis()->attach($divisi);
+
         return response()->json(['data' => $suratMasuk,'status' => 'Surat berhasil di disposisi'], 200);
     }
 
@@ -160,7 +167,7 @@ class SuratMasukController extends Controller
         $suratMasuk->update([
             'isDistribusi'  => 1
         ]);
-        return response()->json(['status' => 'Surat berhasil dikirim ke divisi terkait'], 200);
+        return response()->json(['status' => 'Surat berhasil dikirim ke sub bagian terkait'], 200);
     }
 
     public function valid()
@@ -187,14 +194,15 @@ class SuratMasukController extends Controller
         return response()->json(['data' => $data], 200);
     }
 
-    public function terbaca(SuratMasuk $suratMasuk,Request $request)
+    public function terbaca($suratMasuk,Request $request)
     {
+        $suratMasuk = DivisiSuratMasuk::where('surat_masuk_id',$suratMasuk)->with('suratMasuk')->first();
         if (!$suratMasuk->isDibaca) {
             $suratMasuk->update([
                 'isDibaca' => 1,
                 'tanggal_dibaca' => now()
             ]);
         }
-        return redirect('/'.$suratMasuk->file);
+        return redirect('/'.$suratMasuk->suratMasuk->file);
     }
 }

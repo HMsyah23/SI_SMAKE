@@ -64,7 +64,7 @@ table.table-bordered > tbody > tr > td{
     <tbody>
         @if ($suratMasuk->isValid)
         <tr>
-            <td scope="col" colspan="2"><small>Telah divalidasi oleh Ketua TU pada Tanggal <strong>{{\Carbon\Carbon::parse($suratMasuk->tanggal_validasi)->isoFormat('D MMMM Y')}}</strong></small></td>
+            <td scope="col" colspan="2"><small>Telah divalidasi oleh Ketua TU pada Tanggal <strong>{{$suratMasuk->tanggal_validasi}}</strong></small></td>
         </tr>
         @else
         <tr>
@@ -73,10 +73,10 @@ table.table-bordered > tbody > tr > td{
         @endif
       <tr>
         <td scope="col">Surat Dari       : <strong>{{$suratMasuk->asal_surat}}</strong></td>
-        <td scope="col">Diterima Tanggal : <strong>{{\Carbon\Carbon::parse($suratMasuk->tanggal_terima)->isoFormat('D MMMM Y')}}</strong></td>
+        <td scope="col">Diterima Tanggal : <br> <strong>{{$suratMasuk->tanggal_terima}}</strong></td>
       </tr>
       <tr>
-        <td scope="col">Tanggal Surat    : <strong>{{\Carbon\Carbon::parse($suratMasuk->tanggal_surat)->isoFormat('D MMMM Y')}}</strong></td>
+        <td scope="col">Tanggal Surat    : <strong>{{$suratMasuk->tanggal_surat}}</strong></td>
         <td scope="col">No Agenda        : <strong>{{$suratMasuk->no_agenda}}</strong></td>
       </tr>
       <tr>
@@ -140,7 +140,7 @@ table.table-bordered > tbody > tr > td{
             @endif
             <p>
                 @if ($suratMasuk->tanggal_disposisi != NULL)
-                Samarinda, {{\Carbon\Carbon::parse($suratMasuk->tanggal_disposisi)->isoFormat('D MMMM Y')}}
+                Samarinda, {{$suratMasuk->tanggal_disposisi}}
                 @endif
             </p>
         </td>

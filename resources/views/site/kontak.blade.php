@@ -25,40 +25,40 @@
 				<div class="col-lg-4 col-sm-6 col-md-6">
 					<div class="contact-block mb-4 mb-lg-0">
 						<i class="icofont-live-support"></i>
-						<h5>Call Us</h5>
-						 +823-4565-13456
+						<h5>Hubungi Kami</h5>
+						<p class="nomorWebsite"></p>
 					</div>
 				</div>
 				<div class="col-lg-4 col-sm-6 col-md-6">
 					<div class="contact-block mb-4 mb-lg-0">
 						<i class="icofont-support-faq"></i>
-						<h5>Email Us</h5>
-						 contact@mail.com
+						<h5>Email Kami</h5>
+						 <p class="emailWebsite"></p>
 					</div>
 				</div>
 				<div class="col-lg-4 col-sm-6 col-md-6">
 					<div class="contact-block mb-4 mb-lg-0">
 						<i class="icofont-location-pin"></i>
-						<h5>Location</h5>
-						 North Main Street,Brooklyn Australia
+						<h5>Lokasi</h5>
+						<p class="alamatWebsite"></p>
 					</div>
 				</div>
 			</div>
 		</div>
 	</section>
 	
-	<section class="contact-form-wrap section">
+	<section class="contact-form-wrap section mb-0 pb-0">
 		<div class="container">
 			<div class="row justify-content-center">
 				<div class="col-lg-6">
 					<div class="section-title text-center">
-						<h2 class="text-md mb-2">Contact us</h2>
+						<h2 class="text-md">Peta Interaktif</h2>
 						<div class="divider mx-auto my-4"></div>
-						<p class="mb-5">Laboriosam exercitationem molestias beatae eos pariatur, similique, excepturi mollitia sit perferendis maiores ratione aliquam?</p>
+						{{-- <p class="mb-5">Laboriosam exercitationem molestias beatae eos pariatur, similique, excepturi mollitia sit perferendis maiores ratione aliquam?</p> --}}
 					</div>
 				</div>
 			</div>
-			<div class="row">
+			{{-- <div class="row">
 				<div class="col-lg-12 col-md-12 col-sm-12">
 					<form id="contact-form" class="contact__form " method="post" action="mail.php">
 					 <!-- form message -->
@@ -103,12 +103,14 @@
 						</div>
 					</form>
 				</div>
-			</div>
+			</div> --}}
+		</div>
+		<div class="google-map pb-0 mb-0">
+			<iframe src="https://www.google.com/maps/d/u/0/embed?mid=1_wHLg6fneGpzdlSGAJkdWMJl4htDWmqA&ehbc=2E312F"
+				frameborder="0" style="overflow:hidden;height:480px;width:100%" height="100%" width="100%"></iframe>
 		</div>
 	</section>
 	
 	
-	 <div class="google-map ">
-		<div id="map"></div>
-	</div>
+	
 @endsection

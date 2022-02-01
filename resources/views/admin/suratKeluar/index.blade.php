@@ -24,7 +24,14 @@
     <div class="col-md-12 grid-margin stretch-card">
       <div class="card">
         <div class="card-body">
-          <p class="card-title">Daftar Surat Keluar</p>
+          <div class="d-flex justify-content-between mb-1">
+            <p class="card-title">Daftar Surat Keluar</p>
+          <button class="btn btn-sm btn-secondary" id="refreshSurat" type="button">
+            <div class="rotate">
+               <i class="ti-reload"></i>
+            </div>
+          </button>
+          </div>
           <div class="row">
             <div class="col-12">
               <div class="table-responsive">
@@ -67,6 +74,13 @@
               </div>
               <div class="row">
                 <div class="col-md-12 mb-3">
+                  <label class="form-label">Sub Bagian</label>
+                  <select name="divisi" id="divisi_id" class="form-control form-control-sm">
+                  </select>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-12 mb-3">
                   <label class="form-label">Tujuan surat</label>
                   <input required type="text" id="tujuan" class="form-control form-control-sm" placeholder="Masukkan Asal Surat"/>
                 </div>
@@ -79,11 +93,12 @@
                     <label>File Surat</label>
                     <input type="file" id="file_surat" class="file-upload-default">
                     <div class="input-group col-xs-12">
-                      <input  id="uploadFile" type="text" class="form-control form-control-sm file-upload-info" disabled placeholder="Upload File Surat Masuk">
+                      <input id="uploadFile" type="text" class="form-control form-control-sm file-upload-info" disabled placeholder="Upload File Surat Keluar">
                       <span class="input-group-append">
                         <button class="file-upload-browse btn btn-primary" type="button">Unggah</button>
                       </span>
                     </div>
+                    <div class="text-danger"><small class="file_surat"></small></div>
                   </div>
                 </div>
                 <div class="col-md-12 mb-3">
@@ -92,7 +107,7 @@
                       <label>Lampiran (Optional)</label>
                       <button type="button" class="btn btn-outline-primary btn-rounded btn-icon add_button">
                         <i class="ti-plus"></i>
-                       </a>
+                      </button>
                      </div>
                     <div class="field_wrapper">
                       <input  name="lampiran" type="file" class="form-control form-control-sm file-upload-info files" placeholder="Upload Lampiran">
@@ -101,11 +116,6 @@
                 </div>
               </div>
               <div class="d-flex justify-content-end">
-                <button disabled id="loader" class="btn btn-primary btn-icon btn-rounded mr-2">
-                  <div class="spinner-border" role="status">
-                    <span class="sr-only">Loading...</span>
-                  </div>
-                </button>
                 <button type="submit" class="btn btn-primary perbarui"><i class="ti-save"></i> Simpan</button>
               </div>
             </form>
@@ -122,45 +132,76 @@
             <span aria-hidden="true">&times;</span>
           </button>
           <h4 class="modal-title text-center mb-5"> Informasi <small class="text-primary"><i class="ti-email"></i> Surat Keluar</small></h4>
-            <table class="table table-bordered table-sm mb-3">
-              <tbody>
-                <tr>
-                  <th class="table-light" scope="col">Nomor Surat</th>
-                  <td scope="col"><strong id="no_kel"></strong></td>
-                </tr>
-                <tr>
-                  <th class="table-light" scope="col">Divisi</th>
-                  <td scope="col"><strong id="divis"></strong></td>
-                </tr>
-                <tr>
-                  <th class="table-light" scope="col">Tujuan Surat</th>
-                  <td scope="col"><strong id="tujuans" ></strong></td>
-                </tr>
-                <tr>
-                  <th class="table-light" scope="col">Perihal</td>
-                  <td scope="col"><strong id="peri"></strong></td>
-                </tr>
-                <tr>
-                  <th class="table-light" scope="col">Status</th>
-                  <td scope="col"><strong id="stat"></strong></td>
-                </tr>
-                <tr>
-                  <th class="table-light" scope="col">File Surat</td>
-                    <td>
-                      <a id="file_surat_keluar" href="" target="_blank" class="btn btn-sm btn-primary"><i class="ti-email"></i> Dokumen</a>
-                    </td>
-                </tr>
-                <tr>
-                  <th class="table-light" scope="col">Lampiran</th>
-                  <td scope="col"><strong id="lampir" ></strong></td>
-                </tr>
-              </tbody>
-            </table>
+          <table class="table table-bordered table-sm mb-3">
+            <tbody>
+              <tr>
+                <th class="table-light">Nomor Surat</th>
+                <td><strong id="no_kel"></strong></td>
+              </tr>
+              <tr>
+                <th class="table-light">Divisi</th>
+                <td><small class="text-bold" id="divis"></small></td>
+              </tr>
+              <tr>
+                <th class="table-light">Tujuan Surat</th>
+                <td><strong id="tujuanSurat" ></strong></td>
+              </tr>
+              <tr>
+                <th class="table-light">Perihal</td>
+                <td><strong id="peri"></strong></td>
+              </tr>
+              <tr>
+                <th class="table-light">Status</th>
+                <td><strong id="stat"></strong></td>
+              </tr>
+              <tr>
+                <th class="table-light">File Surat</td>
+                  <td>
+                    <a id="file_surat_keluar" href="" target="_blank" class="btn btn-sm btn-primary"><i class="ti-email"></i> Dokumen</a>
+                  </td>
+              </tr>
+              <tr>
+                <th class="table-light">Lampiran</th>
+                <td>
+                  <strong id="lampir" class="row pr-5"></strong>
+                </td>
+              </tr>
+              <tr>
+                <th class="table-light">Tanggal Dibuat</td>
+                  <td><strong id="tanggalDibuat"></strong></td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
   </div>
   
+  <div class="modal fade" id="modalValidasi" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-body">
+          <button type="button" id="closeModalValidasi" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+          <h4 class="modal-title text-center mb-5"> Validasi <small class="text-primary"><i class="ti-email"></i> Surat Keluar</small></h4>
+          <form class="form-sample" method="" enctype="multipart/form-data" id="ajaxValidasi">
+            @csrf
+            <div class="row">
+              <div class="col-md-12 mb-3">
+                <label class="form-label">Nomor Surat</label>
+                <input required type="text" id="nomor_surat_keluar_validasi" class="form-control form-control-sm" placeholder="Masukkan Nomor Surat"/>
+                <input required type="hidden" id="id_surat_keluar"/>
+              </div>
+            </div>
+            <div class="d-flex justify-content-end">
+              <button type="submit" class="btn btn-primary perbarui"><i class="ti-save"></i> Simpan</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 @endsection
 
 @push('js')
@@ -168,6 +209,16 @@
     $(document).ready(function() {
       $('#loader').hide();
       $('#tanggal_keluar').val(new Date().toDateInputValue());
+
+      $.getJSON(`${BASE_URL}/api/divisis`, function (result) {
+        result.data.forEach(function(v,k) {
+          $('#divisi_id').append(`
+            <option value="${v.id}">${v.divisi}</option>
+          `);
+        })
+      });
+
+
       let maxField = 10; //Input fields increment limitation
       let addButton = $('.add_button'); //Add button selector
       let wrapper = $('.field_wrapper'); //Input field wrapper
@@ -199,13 +250,25 @@
               return meta.row + 1;
             }
           },
-          { "data": "nomor_surat" },
+          { 
+            "data": "id",
+            "render": function ( data, type, row, meta ) {
+              if (row.nomor_surat == `null`) {
+                return '<div class="badge badge-outline-danger">Belum diberikan</div>';
+              }
+                return `<div class="badge badge-outline-success">${row.nomor_surat}</div>`;
+            },
+          },
           { "data": "tujuan_surat" },
           { 
             "data": "id",
             "render": function ( data, type, row, meta ) {
                 if (row.nomor_surat == `null`) {
-                  return `<div class="badge badge-danger">Belum divalidasi</div>`
+                  return `<div class="badge badge-danger">Belum divalidasi</div>
+                          <button onClick="validasiFunction('${data}')" type="button" class="btn btn-success">
+                            <i class="ti-check"></i>
+                          </button>
+                  `
                 }
               return `<div class="badge badge-success">Telah Divalidasi</div>`
             },
@@ -252,41 +315,58 @@
       data.append('tujuan_surat', $('#tujuan').val());
       data.append('perihal', $('#perihalss').val());
       data.append('isValid', 1);
-      data.append('divisi_id' , divisi);
+      data.append('divisi_id' , $('#divisi_id').val());
+      data.append('tanggal_validasi', new Date().toDateInputValue());
       data.append('file', $('#file_surat').prop('files')[0]);
       $('form input[name=lampiran]').each(function(){
         data.append('lampiran[]' ,$(this).prop('files')[0]);
       });
-      data.append('tanggal_validasi', new Date().toDateInputValue()); 
       $.ajax({
         url: `${BASE_URL}/api/suratKeluars/`,
         method: 'post',
         data: data,
         processData: false,
         contentType: false,
-        beforeSend: function () {
-          $('#loader').show();
-          $('.perbarui').prop('disabled', true);
+        beforeSend: function() {
+          $('.perbarui').html('<div class="spinner-border spinner-border-sm"></div> Simpan')
+            .prop('disabled', true);
         },
         complete: function() {
-          $('#loader').hide();
-          $('.perbarui').prop('disabled', false);
+          $('.perbarui').html('<i class="ti-save"></i></div> Simpan').prop('disabled', false);
         },
         success: function(result){
           $("#surat").DataTable().ajax.reload();
-          console.log(result.status);
           Toast.fire({
             title: result.status,
             icon: 'success',
           })
           $('#closeModalSuratKeluar').trigger('click');  
+          $('#uploadFile').removeClass('is-invalid');
           $('#nomor_surat_keluar').val("");
+          $('#tujuan').val("");
+          $('.file_surat').text(``);
+          $('#perihalss').val("");
+          $('#file_surat').val("");
+          $('#uploadFile').val("");
+          $('#lampiran').val("");
+          $('.field_wrapper').text("");
+          $('.field_wrapper').append(`
+            <input  name="lampiran" type="file" class="form-control form-control-sm file-upload-info files" placeholder="Upload Lampiran">
+          `);
         },
         error: function(result){
           let errors = result.responseJSON;
           let myArray = errors.message;
+          $('#uploadFile').addClass('is-invalid');
+          $('.file_surat').text(errors.errors.file);
+          $('.field_wrapper').text("");
+          $('#file_surat').val("");
+          $('#uploadFile').val("");
+          $('.field_wrapper').append(`
+            <input  name="lampiran" type="file" class="form-control form-control-sm file-upload-info files" placeholder="Upload Lampiran">
+          `);
           Toast.fire({
-            title: 'Terdapat parameter yang belum diisi',
+            title: 'Terjadi Kesalahan',
             text: `${errors.message}`,
             icon: 'error',
           })
@@ -327,31 +407,99 @@
         method: 'get',
         success: function(result){
           $('#modalSuratKeluar').modal('show');
-          console.log(result);
           $('#loader').hide();
           $('#divis').text(result.data.divisi.divisi);
-          $('#tujuans').text(result.data.tujuan_surat);
+          $('#tujuanSurat').text(result.data.tujuan_surat);
           $('#peri').text(result.data.perihal);
-          $('#stat').text(``);
           $('#lampir').text(``);
+          $('#no_kel').text(``);
+          $('#tanggalDibuat').text(result.data.created_at);
+          let validasi = '';
+          if (result.data.isValid) {
+            validasi = "Telah Divalidasi |";
+          }
+          $('#stat').text(`${validasi} ${result.data.tanggal_validasi}`);
           if (result.data.nomor_surat == `null`) {
             $('#no_kel').append(`<div class="badge badge-outline-danger">Belum Diberikan</div>`);
-            $('#stat').append(`<div class="badge badge-danger">Belum Divalidasi</div>`);
           } else {
             $('#no_kel').text(result.data.nomor_surat);
-            $('#stat').append(`<div class="badge badge-success">Telah Divalidasi</div>`);
           }
           $('#file_surat_keluar').attr('href',`${BASE_URL}/${result.data.file}`);
-          $.each(JSON.parse(result.data.lampiran), function(k, v) {
-            $('#lampir').append(`<a href="/lampiran/surat/keluar/${v}" target="_blank" class="btn btn-sm btn-outline-primary ml-1">Lampiran ${k+1}</a>`);
-          });
+          const arr = result.data.lampirans;
+          if (arr.length > 0) {
+              arr.forEach(function(v,k) {
+              $('#lampir').append(`
+                <div class="col-sm-4 col-6 mb-1">
+                  <a href="/${v.lampiran}" target="_blank" class="btn btn-sm btn-outline-primary ml-1">Lampiran ${k+1}</a>
+                </div>
+              `);
+            });
+          } else {
+            $('#lampir').append(`<div class="col pl-3"> Tidak ada Lampiran </div>`);
+          }
         },
         error:    function(result){
           let errors = result.responseJSON;
           Toast.fire(errors.status, '', 'info')
         },
       });
-      }
+    }
 
+    function validasiFunction(id){
+      $('#loader').hide();
+      $('#modalValidasi').modal('show');
+      $('#id_surat_keluar').val(id);
+    }
+
+    $('#ajaxValidasi').on('submit', function(e){
+      e.preventDefault();
+      let data = new FormData();
+      data.append('nomor_surat', $('#nomor_surat_keluar_validasi').val());
+      data.append('id', $('#id_surat_keluar').val());
+      data.append('isValid', 1);
+      data.append('tanggal_validasi', new Date().toDateInputValue());
+      let id = $('#id_surat_keluar').val(); 
+      $.ajax({
+        url: `${BASE_URL}/api/suratKeluars/${id}/validasi`,
+        method: 'post',
+        data: data,
+        processData: false,
+        contentType: false,
+        beforeSend: function() {
+          $('.perbarui').html('<div class="spinner-border spinner-border-sm"></div> Simpan')
+            .prop('disabled', true);
+        },
+        complete: function() {
+          $('.perbarui').html('<i class="ti-save"></i></div> Simpan').prop('disabled', false);
+        },
+        success: function(result){
+          $("#surat").DataTable().ajax.reload();
+          Toast.fire({
+            title: result.status,
+            icon: 'success',
+          })
+          $('#closeModalValidasi').trigger('click');  
+          $('#nomor_surat_keluar_validasi').val("");
+        },
+        error: function(result){
+          let errors = result.responseJSON;
+          let myArray = errors.message;
+          Toast.fire({
+            title: 'Terdapat parameter yang belum diisi',
+            text: `${errors.message}`,
+            icon: 'error',
+          })
+        },
+      });
+    });
+
+    $("#refreshSurat").click(function(){
+      $(".rotate").toggleClass("down");
+      Toast.fire({
+            title: "Data Surat Keluar Disegarkan",
+            icon: 'info',
+          })
+      $("#surat").DataTable().ajax.reload();
+    });
   </script>
 @endpush
